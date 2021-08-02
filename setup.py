@@ -3,18 +3,18 @@ from setuptools import setup, find_packages
 
 entry_points = """
 [glue.plugins]
-StatsDataViewer=StatsDataViewer:setup
+glue_statistics=glue_statistics:setup
 """
 
 with open('README.rst') as infile:
     LONG_DESCRIPTION = infile.read()
 
-with open('StatsDataViewer/version.py') as infile:
+with open('glue_statistics/version.py') as infile:
     exec(infile.read())
 
-setup(name='StatsDataViewer',
+setup(name='glue_statistics',
       version=__version__,
-      description='My example plugin',
+      description='Statistics Plugin for Glue',
       long_description=LONG_DESCRIPTION,
       url="https://github.com/jk31768/glue-statistics",
       author='',
