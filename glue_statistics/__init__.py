@@ -16,4 +16,4 @@ COLLAPSE_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_co
 def setup():
     from .glue_statistics import glue_statistics
     from glue.config import qt_client
-    qt_client.add(glue_statistics)
+    qt_client.add(StatsDataViewer)
