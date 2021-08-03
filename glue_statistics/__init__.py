@@ -14,6 +14,6 @@ EXPAND_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_expa
 COLLAPSE_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_collapse.png'))
 
 def setup():
-    from .StatsDataViewer import StatsDataViewer
+    from .glue_statistics import glue_statistics
     from glue.config import qt_client
-    qt_client.add(StatsDataViewer)
+    qt_client.add(glue_statistics)
