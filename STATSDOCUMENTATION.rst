@@ -36,7 +36,7 @@ This section describes the structure of documentation and its files.
 Toolbar
 ============================
 
-.. image:: /icons/glue_filesave.png
+.. image:: /icons/1.png
    :height: 50px
    :width: 50px
 Save   
