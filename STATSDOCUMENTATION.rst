@@ -36,7 +36,7 @@ This section describes the structure of documentation and its files.
 Toolbar
 ============================
 
-Save
+Save   .. image:: https://github.com/jk31768/glue-statistics/blob/master/icons/glue_filesave.png
 -----------------
 This button is used to export your work done on the Statistics Viewer. The current open tree viewer will be exported (Subset/Component Tree View) will all the calculated values. The data is in a csv machine-readable format.
 
