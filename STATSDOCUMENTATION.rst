@@ -37,6 +37,8 @@ Toolbar
 ============================
 
 .. image:: /icons/glue_filesave.png
+   :height: 50px
+   :width: 50px
 Save   
 -----------------
 This button is used to export your work done on the Statistics Viewer. The current open tree viewer will be exported (Subset/Component Tree View) will all the calculated values. The data is in a csv machine-readable format.
