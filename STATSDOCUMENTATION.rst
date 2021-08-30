@@ -92,7 +92,7 @@ There are two tabs under the toolbar that have the Subset view(open by default) 
 Calculations
 =======================
 
-To calculate values, simply check the box next to the data row you wish to find. 
+To calculate values, check the box next to the data row you wish to calculate. Pressing the calculate button on the toolbar will calculate all data rows. 
 
 
 Linking Data
