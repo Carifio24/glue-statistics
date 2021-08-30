@@ -35,21 +35,43 @@ This section describes the structure of documentation and its files.
 
 Toolbar
 ============================
-   
-.. image:: icons/glue_filesave.png
-   :width: 20
-  
+
 Save
 -----------------
-This button is used to export your work done on the Statistics Viewer. The current open tree viewer will be exported (Subset/Component Tree View) will all the calculated values. The file type most people want from the data viewer is .csv, so make sure to put the .csv when saving to do so (you can also export as a different file type if desired). The data format is also machine-readable.
+This button is used to export your work done on the Statistics Viewer. The current open tree viewer will be exported (Subset/Component Tree View) will all the calculated values. The data is in a csv machine-readable format.
+
+Home
+-----------------
+This button resets the entire Statistics Viewer to its default state as it was first loaded with all data, subsets, and calculated values. This button is helpful for users who have sorted the data in the viewer and wish to revert to the original view.
+
+Minimize
+-----------------
+Minimizes the rows of the Statistics Viewer in levels.
+
+Maxmize
+-----------------
+Maximizes the rows of the Statistics Viewer in levels.
+
 
 Scientific/Decimal Notation
 ------------------
 This button is used to toggle the values of the Statistics Viewer from scientific/decimal notation. The calculated values are left-justified in scientific notation and right-justified in decimal notation so the values are lined up and more easily comparable at a glance.
 
+Sorting
+------------------
+Toggles the ability to sort. Click on each column name to sort by decreasing or increasing value. You are also able to drag rows and columns to your preference. 
+
+Quick Export to Viewer
+------------------
+For users who wish to quickly export calculated data in the Statistics Viewer to another viewer in Glue. This prevents exporting the data to an external file, importing the file back into glue, and opening the new viewer.
+
 Instructions
 ------------------
 Press this button to see the instructions panel that showed up when creating the Statistics Viewer. 
+
+Custom Column
+------------------
+Feature that allows the user to create input python code to calculate values of a new column. Current libraries already defined in the config file consist of numpy, math, pandas, and scipy. Other libraries can be imported in the custom config file.
 
 Settings
 ------------------
