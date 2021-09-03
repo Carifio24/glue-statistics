@@ -30,14 +30,6 @@ This section describes the structure of documentation and its files.
 
 
 
-.. code-block:: rst
-
-    this is a code block
-    
-``this is highlighted text``
-
-
-
 Toolbar
 ============================
 
