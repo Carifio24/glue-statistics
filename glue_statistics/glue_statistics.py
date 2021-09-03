@@ -2,8 +2,9 @@ import os
 import numpy as np
 import sys
 import pandas as pd
+import scipy
 import math
-from qtpy.QtWidgets import QWidget, QHBoxLayout, QCheckBox, QTreeWidget, QTreeWidgetItem, QAbstractItemView, QPushButton, QSpinBox, QMainWindow, QLabel, QMessageBox, QRadioButton
+from qtpy.QtWidgets import QWidget, QHBoxLayout, QGridLayout, QVBoxLayout, QTextEdit, QCheckBox, QTreeWidget, QTreeWidgetItem, QAbstractItemView, QPushButton, QSpinBox, QMainWindow, QLabel, QMessageBox, QRadioButton, QFormLayout, QLineEdit, QComboBox
 from glue.config import qt_client
 from glue.core.data_combo_helper import ComponentIDComboHelper
 from glue.core.data_factories import load_data
@@ -21,17 +22,26 @@ from glue.viewers.common.qt.toolbar import BasicToolbar
 from glue.utils.qt import load_ui
 from decimal import getcontext, Decimal
 from glue.core import DataCollection, Hub, HubListener, Data, coordinates
-from glue.core.message import  DataMessage, DataCollectionMessage, SubsetMessage, SubsetCreateMessage, SubsetUpdateMessage, \
+from glue.core.message import  DataMessage, DataCollectionMessage, ErrorMessage, SubsetMessage, SubsetCreateMessage, SubsetUpdateMessage, \
 LayerArtistEnabledMessage, NumericalDataChangedMessage, DataUpdateMessage, DataAddComponentMessage, DataRemoveComponentMessage, DataCollectionAddMessage, DataCollectionDeleteMessage,\
 SubsetDeleteMessage, EditSubsetMessage, DataCollectionActiveChange, LayerArtistVisibilityMessage, LayerArtistDisabledMessage, LayerArtistUpdatedMessage, ComputationMessage, \
 ExternallyDerivableComponentsChangedMessage, DataRenameComponentMessage
-from PyQt5.QtGui import QStandardItemModel, QMouseEvent
+from PyQt5.QtGui import QMovie, QPixmap, QStandardItemModel, QMouseEvent, QTextLayout
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QAction, QTabWidget
+from PyQt5.QtWidgets import QAction, QDialog, QSplashScreen, QTabWidget, QInputDialog
 from glue.icons.qt import helpers
 from qtpy import compat, QtWidgets
 from glue.config import auto_refresh
 from PyQt5 import QtCore
+from glue.viewers.table.qt import TableViewer
+from glue.viewers.profile.qt import ProfileViewer
+from glue.viewers.histogram.qt import HistogramViewer
+from glue.viewers.scatter.qt import ScatterViewer
+from glue_vispy_viewers.scatter.scatter_viewer import VispyScatterViewer
+from glue.core import Data
+from decimal import Decimal
+import re
+from PyQt5.QtCore import QObject, pyqtSignal
 
 from glue_statistics import REFRESH_LOGO, NOTATION_LOGO, EXPORT_LOGO, CALCULATE_LOGO, SORT_LOGO, SETTINGS_LOGO, INSTRUCTIONS_LOGO, HOME_LOGO, SAVE_LOGO, EXPAND_LOGO, COLLAPSE_LOGO
 showInstructions = True
