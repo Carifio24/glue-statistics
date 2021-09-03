@@ -32,6 +32,8 @@ This section describes the structure of documentation and its files.
 ``this is highlighted text``
 
 
+Before the Statistics Viewer can be used, please download the Vispy Viewer for 3D graphs. Instructions on how to download the Vispy Viewer can be found at: https://github.com/glue-viz/glue-vispy-viewers/blob/master/README.rst
+
 
 Toolbar
 ============================
