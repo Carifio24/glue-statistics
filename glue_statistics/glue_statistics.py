@@ -3470,7 +3470,7 @@ class StatsDataViewer(DataViewer):
 				for y in range(0, st.child(x).childCount()):
 					for z in range(0,st.child(x).child(y).childCount()):
 						item = self.subsetTree.indexFromItem(st.child(x).child(y).child(z))
-						calculatedValueExists = self.checkIfCalculated(st.child(x).child(y))
+						calculatedValueExists = self.checkIfCalculated(st.child(x).child(y).child(z))
 						#if self.subsetTree.itemFromIndex(item).data(3,0) != None:
 						if calculatedValueExists:
 							temp = []
