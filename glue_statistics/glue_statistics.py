@@ -46,6 +46,57 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from glue_statistics import REFRESH_LOGO, NOTATION_LOGO, EXPORT_LOGO, CALCULATE_LOGO, SORT_LOGO, SETTINGS_LOGO, INSTRUCTIONS_LOGO, HOME_LOGO, SAVE_LOGO, EXPAND_LOGO, COLLAPSE_LOGO
 showInstructions = True
 
+
+
+@viewer_tool
+class AddColumnButton(Tool):
+	"""
+    A class used to add a column with arithmetic functionality in the viewer
+    ----------
+    Attributes
+    ----------
+    icon : str
+        a formatted string that points to the icon png file location
+    tool_id : str
+        the id of the refresh tool used to add to toolbar
+    action_text : str
+        brief description of the tool's function
+	tool_tip: str
+		detailed tip about the tool's function
+	status_tip: str
+		message about tool's status
+	shortcut: char
+		character that can toggle the tool from keyboard
+	-------
+    Methods
+    -------
+     __init__(self,viewer):
+	 	connects the StatsDataViewerviewer to the tool
+	activate(self):
+		action performed when tool is activated
+
+    """
+
+	icon = '/Users/jk317/Glue/icons/glue_addColumn.png'
+	tool_id = 'add_column'
+	action_text = 'Add Column'
+	tool_tip = 'Add Column'
+	status_tip = 'Add Column'
+
+	def __init__(self, viewer):
+		self.viewer = viewer
+
+	def close(self):
+		pass
+
+	def activate(self):
+		self.viewer.addColumn()
+
+
+
+
+
+
 @viewer_tool
 class CollapseButton(Tool):
 	"""
@@ -490,6 +541,57 @@ class SortButton(Tool):
 	def close(self):
 		pass
 
+	
+	
+@viewer_tool
+class ExportButton(Tool):
+	"""
+    A class used to export calculated values of the active viewer
+    ----------
+    Attributes
+    ----------
+    icon : str
+        a formatted string that points to the icon png file location
+    tool_id : str
+        the id of the refresh tool used to add to toolbar
+    action_text : str
+        brief description of the tool's function
+	tool_tip: str
+		detailed tip about the tool's function
+	status_tip: str
+		message about tool's status
+	shortcut: char
+		character that can toggle the tool from keyboard
+	-------
+    Methods
+    -------
+     __init__(self,viewer):
+	 	connects the StatsDataViewerviewer to the tool
+	activate(self):
+		action performed when tool is activated
+
+    """
+	icon = '/Users/jk317/Glue/icons/glue_export.png'
+	tool_id = 'export_tool'
+	action_text = 'Export'
+	tool_tip = 'Click icon to export'
+	status_tip = 'Click to export'
+	#shortcut = 'M'
+
+	def __init__(self,viewer):
+		self.viewer = viewer
+
+	def activate(self):
+		#print("Export button activate")
+		self.viewer.pressedEventExportToViewer()
+		#print(self.viewer.layers[0].layer)
+
+	def close(self):
+		pass
+
+	
+	
+	
 
 class StatsViewerState(ViewerState):
 
