@@ -137,11 +137,13 @@ class CollapseButton(Tool):
 		pass
 	
 	def activate(self):
+		self.viewer.minimizeLevel()
+		'''
 		if self.viewer.tabs.currentIndex() == 0:
 			self.viewer.subsetTree.collapseAll()
 		elif self.viewer.tabs.currentIndex() == 1:
 			self.viewer.componentTree.collapseAll()
-
+		'''
 
 @viewer_tool
 class Instructions(Tool):
