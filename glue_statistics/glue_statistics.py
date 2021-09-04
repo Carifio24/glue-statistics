@@ -43,7 +43,7 @@ from decimal import Decimal
 import re
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from glue_statistics import REFRESH_LOGO, NOTATION_LOGO, EXPORT_LOGO, CALCULATE_LOGO, SORT_LOGO, SETTINGS_LOGO, INSTRUCTIONS_LOGO, HOME_LOGO, SAVE_LOGO, EXPAND_LOGO, COLLAPSE_LOGO
+from glue_statistics import REFRESH_LOGO, NOTATION_LOGO, EXPORT_LOGO, CALCULATE_LOGO, SORT_LOGO, SETTINGS_LOGO, INSTRUCTIONS_LOGO, HOME_LOGO, SAVE_LOGO, EXPAND_LOGO, COLLAPSE_LOGO, CUSTOM_COLUMN_LOGO
 showInstructions = True
 
 
@@ -77,7 +77,7 @@ class AddColumnButton(Tool):
 
     """
 
-	icon = '/Users/jk317/Glue/icons/glue_addColumn.png'
+	icon = CUSTOM_COLUMN_LOGO
 	tool_id = 'add_column'
 	action_text = 'Add Column'
 	tool_tip = 'Add Column'
