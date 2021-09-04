@@ -430,54 +430,6 @@ class ExpandButton(Tool):
 	def close(self):
 		pass
 
-	
-@viewer_tool
-class ExportButton(Tool):
-	"""
-	A class used to export calculated values of the active viewer
-	----------
-	Attributes
-	----------
-	icon : str
-	a formatted string that points to the icon png file location
-	tool_id : str
-	the id of the refresh tool used to add to toolbar
-	action_text : str
-	brief description of the tool's function
-	tool_tip: str
-		detailed tip about the tool's function
-	status_tip: str
-		message about tool's status
-	shortcut: char
-		character that can toggle the tool from keyboard
-	-------
-	Methods
-	-------
-	__init__(self,viewer):
-		connects the StatsDataViewerviewer to the tool
-	activate(self):
-		action performed when tool is activated
-
-	"""
-	icon = SAVE_LOGO
-	tool_id = 'export_tool'
-	action_text = 'Export'
-	tool_tip = 'Click icon to export'
-	status_tip = 'Click to export'
-	shortcut = 'F'
-
-	def __init__(self,viewer):
-		self.viewer = viewer
-
-	def activate(self):
-		#print("Export button activate")
-		self.viewer.pressedEventExport()
-		#print(self.viewer.layers[0].layer)
-
-	def close(self):
-		pass
-
-
 
 @viewer_tool
 class CalculateButton(Tool):
