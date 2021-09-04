@@ -12,6 +12,7 @@ HOME_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_home.p
 SAVE_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_filesave.png'))
 EXPAND_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_expand.png'))
 COLLAPSE_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_collapse.png'))
+CUSTOM_COLUMN_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_addColumn.png'))
 
 def setup():
     from .glue_statistics import StatsDataViewer
