@@ -1289,31 +1289,24 @@ class StatsDataViewer(DataViewer):
 	def expandLevel(self):
 		#subset view: tricky, there are only three levels for subsets but 4 for subsets
 		if self.tabs.currentIndex() == 0:
+			
+			st = self.subsetTree.invisibleRootItem().child(0)
+			for x in range(0, st.childCount() ):
+				st.child(x).setExpanded(True)
+				for y in range(0, st.child(x).childCount()):
+					st.child(x).child(y).setExpanded(True)
 
 
-			updateDataLevel = True
-			updateSubsetLevel = True
-			if self.subsetViewDataLevel >=1:
-				updateDataLevel = False
-			#if self.subsetViewSubsetLevel >=3:
-			#	updateSubsetLevel = False
-
-			if updateDataLevel:
-				self.subsetViewDataLevel += 1
-				self.expandLevelHelper(self.subsetViewDataLevel, self.subsetTree.invisibleRootItem().child(0))
-				self.expandLevelHelper(self.subsetViewDataLevel, self.subsetTree.invisibleRootItem().child(1))
-
-		#	if updateSubsetLevel:
-			#	self.subsetViewSubsetLevel += 1
-			#	self.expandLevelHelper(self.subsetViewSubsetLevel, self.subsetTree.invisibleRootItem().child(1))
-
+			st = self.subsetTree.invisibleRootItem().child(1)
+			for x in range(0, st.childCount() ):
+				st.child(x).setExpanded(True)
+				for y in range(0, st.child(x).childCount()):
+					st.child(x).child(y).setExpanded(False)
 
 		#component view
 		elif self.tabs.currentIndex() == 1:
-			if self.componentViewLevel >= 2:
-				return
-			self.componentViewLevel  += 1
-			self.expandLevelHelper(self.componentViewLevel, self.componentTree.invisibleRootItem())
+			self.componentTree.expandAll()
+
 
 	def expandLevelHelper(self, level, view):
 		'''
@@ -1337,27 +1330,24 @@ class StatsDataViewer(DataViewer):
 		'''
 		#subset view: tricky, there are only three levels for subsets but 4 for subsets
 		if self.tabs.currentIndex() == 0:
-			updateDataLevel = True
-			updateSubsetLevel = True
-			if self.subsetViewDataLevel <=0:
-				updateDataLevel = False
-			#if self.subsetViewSubsetLevel <=0:
-			#	updateSubsetLevel = False
-			if updateDataLevel:
-				self.subsetViewDataLevel -= 1
-				self.minimizeLevelHelper(self.subsetViewDataLevel, self.subsetTree.invisibleRootItem().child(0))
-				self.minimizeLevelHelper(self.subsetViewDataLevel, self.subsetTree.invisibleRootItem().child(1))
+			
+			st = self.subsetTree.invisibleRootItem().child(0)
+			for x in range(0, st.childCount() ):
+				st.child(x).setExpanded(False)
 
-			#if updateSubsetLevel:
-			#	self.subsetViewSubsetLevel -= 1
-			#	self.minimizeLevelHelper(self.subsetViewSubsetLevel, self.subsetTree.invisibleRootItem().child(1))
-
+			st = self.subsetTree.invisibleRootItem().child(1)
+			for x in range(0, st.childCount() ):
+				st.child(x).setExpanded(False)
+				for y in range(0, st.child(x).childCount()):
+					st.child(x).child(y).setExpanded(False)
+					for z in range(0,st.child(x).child(y).childCount()):
+						st.child(x).child(y).child(z).setExpanded(False)
+			
+			
+		
 		#component view
 		elif self.tabs.currentIndex() ==1:
-			if self.componentViewLevel <= 0:
-				return
-			self.componentViewLevel  -= 1
-			self.minimizeLevelHelper(self.componentViewLevel, self.componentTree.invisibleRootItem())
+			self.componentTree.collapseAll()
 
 	def minimizeLevelHelper(self, level, view):
 		'''
