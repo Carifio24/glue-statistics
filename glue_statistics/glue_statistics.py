@@ -659,7 +659,9 @@ class StatsViewerStateWidget(QWidget):
 		self.viewer_state = viewer_state
 		self._connections = autoconnect_callbacks_to_qt(self.viewer_state, self.ui)
 '''
-class StatsDataViewer(DataViewer): 
+
+
+class StatsDataViewer(DataViewer):
 	"""
     A class used to display and make the StatsDataViewer functional
     ----------
@@ -687,7 +689,7 @@ class StatsDataViewer(DataViewer):
 	inherit_tools = False
 
 	_toolbar_cls = BasicToolbar
-	tools = ['export_tool', 'home_tool','calc_tool','collapse','expand_tool','notation_tool', 'sort_tool', 'instructions','settings'] #  'expand_tool'
+	tools = ['save_tool', 'home_tool','calc_tool','collapse','expand_tool','notation_tool', 'sort_tool', 'export_tool','instructions','add_column','settings'] #  'expand_tool'
 
 	def __init__(self, *args, **kwargs):
 		'''
@@ -700,7 +702,7 @@ class StatsDataViewer(DataViewer):
 		#self.calculatedSubsetViewList = np.array(["Subset,Dataset,Component,Mean,Median,Minimum,Maximum,Sum"])
 		#self.calculatedComponentViewList = np.array(["Subset,Dataset,Component,Mean,Median,Minimum,Maximum,Sum"])
 
-		self.headings = ('Name', 'Mean', 'Median', 'Minimum', 'Maximum', 'Sum')
+		self.headings = ['Name', 'Mean', 'Median', 'Minimum', 'Maximum', 'Sum']
 		# Set up dict for caching
 		self.cache_stash = dict()
 		self.isSci = True
@@ -717,11 +719,13 @@ class StatsDataViewer(DataViewer):
 		self.updateComponentSort = False
 		self.selected_indices = []
 
+		self.columnCount = 6
+
 		# Set up tree widget item for the view
 		self.subsetTree = ModifiedTreeWidget()
 		self.subsetTree.setSelectionMode(QAbstractItemView.MultiSelection)
-		self.subsetTree.setColumnCount(6)
-		self.subsetTree.setColumnWidth(0, 300)
+		self.subsetTree.setColumnCount(self.columnCount)
+		self.subsetTree.setColumnWidth(0, 350)
 		#self.subsetTree.header().setSortIndicator(0, 0)
 		QTreeWidget.setHeaderLabels(self.subsetTree, self.headings)
 		self.subsetTree.itemClicked.connect(self.check_status)
@@ -732,7 +736,7 @@ class StatsDataViewer(DataViewer):
 		#component view tree Widget
 		self.componentTree = ModifiedTreeWidget()
 		self.componentTree.setSelectionMode(QAbstractItemView.MultiSelection)
-		self.componentTree.setColumnCount(6)
+		self.componentTree.setColumnCount(self.columnCount)
 		self.componentTree.setColumnWidth(0, 300)
 		self.componentTree.header().setSortIndicator(1, 0)
 		QTreeWidget.setHeaderLabels(self.componentTree, self.headings)
@@ -791,10 +795,8 @@ class StatsDataViewer(DataViewer):
 			msgbox = QMessageBox()
 			msgbox.setWindowTitle("Statistics Viewer Instructions")
 			#Rich Text format for styling
-			msgbox.setTextFormat(1) 
-			
+			msgbox.setTextFormat(1)
 			msgbox.setText("<h2 style=\"text-align: center;\"><img src=" +str(INSTRUCTIONS_LOGO)+ " width=\"46\" height=\"46\" />&nbsp;<strong>Instructions:</strong></h2><p>Tick the rows to calculate basic statistics</p><p>Click between Subset and Component views</p><p><img src="+ str(SAVE_LOGO) +" width=\"30\" height=\"30\" />&nbsp;Exports the current open tree view</p><p><img src="+str(HOME_LOGO)+" width=\"30\" height=\"30\" />&nbsp;Resets the viewer to default layout</p><p><img src="+str(CALCULATE_LOGO)+" width=\"30\" height=\"30\"/>&nbsp;Calculate entire view</p><p><img src="+str(COLLAPSE_LOGO)+" width=\"30\" height=\"30\"/>&nbsp;Minimize a level</p><p><img src="+str(EXPAND_LOGO)+" width=\"30\" height=\"30\"/>&nbsp;Expand a level</p><p><img src="+ str(NOTATION_LOGO)+ " width=\"30\" height=\"30\" />&nbsp;Toggles scientific notation and decimal form</p><p><strong><img src="+str(SORT_LOGO)+" width=\"30\" height=\"30\" />&nbsp;</strong>Enables sorting, selecting a column will sort rows accordingly</p><p><img src="+ str(INSTRUCTIONS_LOGO)+ " width=\"30\" height=\"30\" />&nbsp;Read instructions</p><p><img src="+str(SETTINGS_LOGO)+" width=\"30\" height=\"30\" />&nbsp;Change # of decimal points, instructions, etc</p><p>&nbsp;</p>")
-			
 			#msgbox.setText("<h2 style=\"text-align: center;\"><strong>Instructions:</strong></h2><p>Check the rows to calculate basic statistics</p><p>Cycle between Subset and Component views with the tabs</p><p><span style=\"color: #ff0000;\"><strong>Save</strong></span> Exports the current open tree view</p><p><span style=\"color: #ff0000;\"><strong>Home</strong></span> Resets viewer to default state</p><p><span style=\"color: #ff0000;\"><strong>Notation</strong></span> Toggles scientific notation and decimal form</p><p><span style=\"color: #ff0000;\"><strong>Sort</strong></span> Enables sorting, selecting a column will sort rows accordingly</p><p><span style=\"color: #ff0000;\"><strong>Instructions</strong></span> See how the viewer works</p><p><span style=\"color: #ff0000;\"><strong>Settings</strong></span> Change # of decimal points or toggle manual mode</p>")
 			#msgbox.setText("<h2 style=\"text-align: center;\"><img src=\"https://github.com/jk31768/glue-statistics/blob/master/StatsDataViewer/glue_instructions.png?raw=true\" width=\"46\" height=\"46\" />&nbsp;<strong>Instructions:</strong></h2><p>Check the rows to calculate basic statistics<p><p>Cycle between Subset and Component views with the tabs<p><p><img src=GLUE_HOME />&nbsp; Resets viewer to default state<p><p><img src=GLUE_REFRESH width=\"30\" height=\"30\"/>&nbsp; Checks for possible calculations after linking data<p><p><span style=\"color: #ff0000;\"><strong><img src=GLUE_SORT width=\"30\" height=\"30\"/>&nbsp;</strong></span>Enables sorting, selecting a column will sort rows accordingly<p><p><img src=GLUE_SCIENTIFIC_NOTATION width=\"30\" height=\"30\"/>&nbsp;Toggles scientific notation and decimal form<p><p><img src='glue_filesave' width=\"30\" height=\"30\"/>Exports the current open tree view<p><p><img src=GLUE_SETTINGS width=\"30\" height=\"30\" />&nbsp;to change # of decimal points or to read more instructions<p>")
 			#msgbox.setText("<h2 style=\"text-align: center;\"><img src=\"/Users/jk317/Glue/icons/glue_instructions.png\" width=\"46\" height=\"46\" />&nbsp;<strong>Instructions:</strong></h2><ul><li>Check the rows to calculate basic statistics</li><li>Cycle between Subset and Component views with the tabs</li><li><img src=\"/glue/icons/glue_home\" />&nbsp; Collapses all rows</li><li><img src=\"/Users/jk317/Glue/icons/glue_refresh.png\" width=\"30\" height=\"30\"/>&nbsp; Checks for possible calculations after linking data</li><li><span style=\"color: #ff0000;\"><strong><img src=\"/Users/jk317/Glue/icons/glue_sort.png\" width=\"30\" height=\"30\"/>&nbsp;</strong></span>Enables sorting, selecting a column will sort rows accordingly</li><li><img src=\"/Users/jk317/Glue/icons/glue_scientific_notation.png\" width=\"30\" height=\"30\"/>&nbsp;Toggles scientific notation and decimal form</li><li><img src='glue_filesave' width=\"30\" height=\"30\"/>Exports the current open tree view</li><li><img src=\"/Users/jk317/Glue/icons/glue_settings.png\"width=\"30\" height=\"30\" />&nbsp;to change # of decimal points or to read more instructions</li></ul>")
@@ -837,26 +839,784 @@ class StatsDataViewer(DataViewer):
 		self.component_names = self.componentNames()
 		self.notYetManualWarned = True
 
+		#variables for expanding and collapsing in levels
+		self.componentViewLevel = 2
+		self.subsetViewDataLevel = 1
+		self.subsetViewSubsetLevel = 3
+
+		self.currentColumns = ["{Mean}", "{Median}", "{Minimum}", "{Maximum}", "{Sum}"]
+
+	def addColumn(self):
+		'''
+		Function that is called when user presses new column button on toolbar. Creates a new column with a mathematical expression.
+		'''
+		self.widget = QWidget()
+		self.widget.setWindowFlags(Qt.WindowContextHelpButtonHint| Qt.WindowCloseButtonHint)
+		self.widget.setWhatsThis("To see information on how to use this feature, go to Glue's documentation at https://github.com/glue-viz/glue")
+		self.widget.setFixedWidth(700)
+		#self.widget.setFixedSize(700,450)
+		#self.widget.setWindowFlag(Qt.WindowContextHelpButtonHint, True)
+		title = "New Column"
+		message = "Enter new column name"
+		instr = QLabel("<p><strong>Note: </strong>Attribute names in the expression should be surrounded <br> by { } brackets (e.g. {Component}),and you can use Numpy functions using np.<function>, Pandas, <br> math or any library defined in the config file</p>")
+		instr.setTextFormat(1)
+		self.expressionEditor = QTextEdit()
+		#self.expressionEditor.setFixedSize(650,175)
+		#self.expressionEditor.resize(50,60)
+		self.expressionEditor.setPlaceholderText("Type any mathematical expression here - you can include attribute names from the drop-down below by selecting them and clicking 'Insert'. Press the ? button for examples of valid expressions and more information.")
+		self.expressionEditor.textChanged.connect(self.highlightAttributes)
+
+		self.columnNameLine = QLineEdit()
+		#self.columnNameLine.setFixedWidth(300)
+		self.columnNameLine.setPlaceholderText("New column name")
+		self.columnNameLine.textChanged.connect(self.checkColumnNameExists)
+		equalsLabel = QLabel("=")
+
+		layoutName = QHBoxLayout()
+		layoutName.addWidget(self.columnNameLine)
+		layoutName.addWidget(equalsLabel)
+		layoutName.setAlignment(Qt.AlignTop)
+
+		insert = QPushButton("Insert Column: ")
+		insert.clicked.connect(self.insertAttribute)
+
+		layout = QHBoxLayout()
+		layout.addWidget(instr)
+
+		layout2 = QHBoxLayout()
+		layout2.setAlignment(Qt.AlignTop)
+
+
+		#layout2.addWidget(QLabel("Arthimetic Expression:"))
+		layout2.addWidget(self.expressionEditor)
+
+		self.statsCombo = QComboBox()
+
+		for statistic in self.headings:
+			if statistic != "Name":
+				self.statsCombo.addItem(statistic)
+
+		#self.statsCombo.addItem("Size")
+
+		layout3 = QHBoxLayout()
+		layout3.setAlignment(Qt.AlignTop)
+
+		insertComp = QPushButton("Insert Component")
+		insertComp.clicked.connect(lambda: self.expressionEditor.insertPlainText("{Component}"))
+		#layout9 = QHBoxLayout()
+		#layout3.addWidget(QLabel("Insert Component:"))
+		layout3.addWidget(insertComp)
+
+		#layout3.addWidget(QLabel("Insert Column:"))
+		layout3.addWidget(insert)
+		layout3.addWidget(self.statsCombo)
+		#layout3.setAlignment(Qt.AlignTop)
+
+		layoutExamples = QHBoxLayout()
+		layoutExamples.setAlignment(Qt.AlignTop)
+		exampleExpr = QLabel()
+		exampleExpr.setTextFormat(1)
+		exampleExpr.setText("<p><strong>Example Expressions:</strong><br>- np.std({Component})<br>- np.sum({Maximum}-{Minimum})*2</p>")
+		layoutExamples.addWidget(exampleExpr)
+
+		layout4 = QHBoxLayout()
+
+		self.setNameLabel = QLabel()
+		self.setNameLabel.setTextFormat(1)
+		self.setNameLabel.setText("<p><span style=\"color: #ff0000;\">"+"Attribute name not set"+"</span></p>")
+		self.submit = QPushButton("Ok")
+		self.submit.setEnabled(False)
+		self.submit.clicked.connect(self.createNewColumn)
+		cancel = QPushButton("Cancel")
+		cancel.clicked.connect(self.widget.close)
+		layout4.addWidget(self.setNameLabel)
+		layout4.addWidget(cancel)
+		layout4.addWidget(self.submit)
+		#layout4.setAlignment(Qt.AlignTop)
+		#layout.addRow(submit,cancel)
+
+		mainLayout = QVBoxLayout()
+		mainLayout.setAlignment(Qt.AlignTop)
+		mainLayout.addLayout(layoutName)
+		mainLayout.addLayout(layout2)
+		mainLayout.addLayout(layout3)
+		mainLayout.addLayout(layout)
+		mainLayout.addLayout(layoutExamples)
+		mainLayout.addLayout(layout4)
+
+
+		self.widget.setLayout(mainLayout)
+		self.widget.setWindowTitle("Add Custom Column")
+		self.widget.show()
+
+
+
+		#layout.addRow(QInputDialog.getItem(widget, title, message))
+
+		#self.le = QLineEdit()
+		#layout.addRow(instr,self.le)
+		#layout.addRow(QInputDialog.getItem(widget, title, message),self.le)
+		#le = QLineEdit()
+
+		#btn1 = QPushButton("get name")
+		#btn1.clicked.connect(gettext)
+
+	def checkColumnNameExists(self):
+		'''
+		Sets the red text at bottom left screen of add column menu to red or makes it go away
+		'''
+		if self.columnNameLine.text() == "":
+			self.setNameLabel.setText("<p><span style=\"color: #ff0000;\">"+"Attribute name not set"+"</span></p>")
+			self.submit.setEnabled(False)
+
+		elif self.columnNameLine.text() in self.headings:
+			self.setNameLabel.setText("<p><span style=\"color: #ff0000;\">"+"Column already defined"+"</span></p>")
+			self.submit.setEnabled(False)
+		
+		else:
+			self.setNameLabel.setText('')
+			self.submit.setEnabled(True)
+
+	def highlightAttributes(self):
+		self.expressionEditor.blockSignals(True)
+		cursorLocation = self.expressionEditor.textCursor()
+		print(cursorLocation)
+		text = self.expressionEditor.toPlainText()
+		
+		html = "<p>"
+		componentName = ""
+		addRegularText = True
+		addComponentName = False
+		print(text)
+		for headings in self.headings:
+			if '{'+headings+'}' in text:
+				text=text.replace('{'+headings+'}', "<span style=\"color: #3366ff;\"><strong>"+'{'+headings+'}'+"</strong></span>")
+			if "{Component}" in text:
+				text=text.replace("{Component}", "<span style=\"color: #3366ff;\"><strong>"+"{Component}"+"</strong></span>")
+		html += text
+
+		html+="</p>"
+		print(html)
+		self.expressionEditor.clear()
+		self.expressionEditor.insertHtml(html)
+		#self.expressionEditor.setTextCursor(cursorLocation)
+		self.expressionEditor.blockSignals(False)
+
+	def createNewColumn(self, expression):
+		print("made new column")
+		columnName = self.columnNameLine.text()
+		expr = str(self.expressionEditor.toPlainText())
+		try:
+			columnValues,subsetValues = self.calculateNewColumn(expr)
+			#columnValues = [1,2,3,4,5] test values
+			print("Done!", columnValues)
+
+			#Add column to viewer
+			#subset view
+
+			self.headings.append(str(columnName))
+			self.subsetTree.setColumnCount(len(self.headings))
+			self.componentTree.setColumnCount(len(self.headings))
+			QTreeWidget.setHeaderLabels(self.subsetTree,self.headings)
+			QTreeWidget.setHeaderLabels(self.componentTree, self.headings)
+
+			self.populateNewColumn(columnValues,subsetValues)
+
+		
+		except Exception as e:
+			print(e)
+			np.set_printoptions(threshold=False)
+			QMessageBox.warning(None,'Error','Could not evaluate code: '+ str(e))
+			return
+		
+	def populateNewColumn(self, columnValues,subsetValues):
+		'''For Data'''
+		#Subset View
+		data_branch = self.subsetTree.invisibleRootItem().child(0)
+		print('okk', columnValues)
+		for data_i in range(0, data_branch.childCount()):
+			for comp_i in range(0, data_branch.child(data_i).childCount()):
+				value = self.changeNotationForCustomColumnValues(columnValues[comp_i])
+				#print(type(columnValues[comp_i]))
+				temp = self.subsetTree.indexFromItem(data_branch.child(data_i).child(comp_i))
+				self.subsetTree.itemFromIndex(temp).setData(len(self.headings)-1,0, value)
+				print("subset view added")
+		#Component View
+		data_branch = self.componentTree.invisibleRootItem()
+		for data_i in range(0, data_branch.childCount()):
+			for comp_i in range(0, data_branch.child(data_i).childCount()):
+				value = self.changeNotationForCustomColumnValues(columnValues[comp_i])
+				#print(type(columnValues[comp_i]))
+				#adds values for All Data rows in datasets
+				temp = self.componentTree.indexFromItem(data_branch.child(data_i).child(comp_i).child(0))
+				self.componentTree.itemFromIndex(temp).setData(len(self.headings)-1,0, value)
+				print("component view added")
+
+		'''For Subsets'''
+		#Subset View
+		index = 0
+		data_branch = self.subsetTree.invisibleRootItem().child(1)
+		for subset_i in range(0, data_branch.childCount()):
+			for data_i in range(0, data_branch.child(subset_i).childCount()):
+					for comp_i in range(0, data_branch.child(subset_i).child(data_i).childCount()):
+						if not data_branch.child(subset_i).child(data_i).child(comp_i).foreground(0) == QtGui.QBrush(Qt.gray):
+							value = self.changeNotationForCustomColumnValues(subsetValues[index])
+							temp = self.subsetTree.indexFromItem(data_branch.child(subset_i).child(data_i).child(comp_i))
+							self.subsetTree.itemFromIndex(temp).setData(len(self.headings)-1,0, value)
+							index += 1
+							print("Subset view subset added")			
+
+		#Component View
+		index = 0
+		data_branch = self.componentTree.invisibleRootItem()
+		for data_i in range(0, data_branch.childCount()):
+			for subset_i in range(0, len(self.xc.subset_groups)):
+				subset_i +=1
+				for comp_i in range(0,data_branch.child(data_i).childCount()):
+					if not data_branch.child(data_i).child(comp_i).child(subset_i).foreground(0) == QtGui.QBrush(Qt.gray):
+						value = self.changeNotationForCustomColumnValues(subsetValues[index])
+						temp = self.componentTree.indexFromItem(data_branch.child(data_i).child(comp_i).child(subset_i))
+						self.componentTree.itemFromIndex(temp).setData(len(self.headings)-1,0, value)
+						index += 1
+						print("component view subset added")
+
+	def calculateNewColumn(self, expr):
+		'''
+		TODO: This method is super laggy. split() method is slow and eval itself is slow.
+		'''
+		columnValues = []
+		subsetValues = []
+		np.set_printoptions(threshold=sys.maxsize)
+
+		#start loading screen
+		#self.animation_label = QLabel("Loading...")
+		#self.animation_layout = QVBoxLayout()
+		#self.animation_layout.addWidget(self.animation_label)
+		#self.loadingScreen = QWidget()
+		#self.loadingScreen.setFixedSize(200,200)
+		#self.loadingScreen.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
+		#self.loadingScreen.setLayout(self.animation_layout)
+		self.loadingScreen = QMessageBox()
+		self.loadingScreen.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.FramelessWindowHint)
+		self.loadingScreen.setFixedSize(200,200)
+		self.loadingScreen.setInformativeText("Loading...")
+		#self.loadingScreen.setStandardButtons(QMessageBox.close)
+		self.loadingScreen.exec()
+
+
+		#self.loadingMovie = QMovie('jk317/glue/icons/glue_buffering.png')
+		#if not self.loadingMovie.isValid():
+		#	print("not valid")
+		#self.pixmap = QPixmap('jk317/glue/icons/glue_buffering.png')
+		#self.animation_label.setPixmap(self.pixmap)
+		#self.animation_label.setMovie(self.loadingMovie)
+		#self.loadingMovie.start()d
+
+		
+		currentlyActiveDatasets = self.getActiveDatasetsInPlotLayer()
+		#Uses component variable
+		for dataset in self.xc:
+			if dataset.label in currentlyActiveDatasets:
+				for comp in range(0,len(dataset.components)):
+					code = expr
+					#uses predefined columns
+					for index in range(0,len(self.headings)):
+						if "{"+self.headings[index]+"}" in expr:
+							columnArray = self.getColumnArray(index)
+							#columnArray = np.array(columnArray)
+							code = code.replace("{"+self.headings[index]+"}", str(columnArray[comp]))
+							#print(code)
+							#columnValues.append(answer)
+							#if Component is not used, then we can exit early
+							#if not "{Component}" in expr:
+							#	answer = eval(org.replace("{"+self.headings[index]+"}", "np.array("+str(columnArray)+")"))
+							#	np.set_printoptions(threshold=False)
+							#	self.widget.close()
+							#	return answer
+
+					import timeit
+					
+					if "{Component}" in expr:
+						#print("Calculating" , dataset.components[comp],"...")
+						start = timeit.default_timer()
+						
+						#str(array) results in an array without commas, which cannot be evaluated.
+						#Need to manipulate array string so it has commas.
+						
+						#print(type(dataset["PRIMARY"]))
+						dataList = dataset[str(dataset.components[comp])]
+						#dataList = np.ndarray([elem for elem in dataList if type(elem) == int or type(elem) == np.double or type(elem) ==float])
+						dataList = np.array2string(dataList, separator=',')
+						'''
+						print("converting ...")
+						dataList = str(dataList)
+						print("splitting ...")
+						dataList = ",".join(dataList.split())
+						print("replacing ...")
+						dataList = dataList.replace("[,", "[")
+						#need to create a copy of expr because each {Component} will be different component for the loop
+						'''
+						code = code.replace("{Component}", dataList)
+						code = code.replace("nan,", "")
+						code = code.replace("nan","")
+						#print(code)
+						try:
+							print("evaluating ...")
+							answer = eval(code)
+						except:
+							print("Did not calculate")
+							answer = "NAN"
+							#break
+						stop = timeit.default_timer()
+						print('Time: ', stop - start)  
+						columnValues.append(answer)
+
+					#No components or predefined columns used: these are simple expressions like  1+1 or "test value"
+					else:
+						answer = eval(code)
+						columnValues.append(answer)
+
+		#subsets
+		for subset_i in range(0, len(self.xc.subset_groups)):
+			for data_i in range(0,len(self.xc)):
+				if self.xc[data_i].label in currentlyActiveDatasets:
+					for comp_i in self.xc.subset_groups[subset_i].subsets[data_i].components:
+						code = expr
+						print("DOING SUBSETS", comp_i)
+						for index in range(0,len(self.headings)):
+							if "{"+self.headings[index]+"}" in expr:
+								columnArray = self.getSubsetArray(index)
+								#columnArray = np.array(columnArray)
+								code = code.replace("{"+self.headings[index]+"}", str(columnArray[comp]))
+							
+						if "{Component}" in expr:
+							start = timeit.default_timer()
+							try:
+								print("Calculating" , self.xc.subset_groups[subset_i].subsets[data_i][comp_i],"...")
+							except:
+								break
+							start = timeit.default_timer()
+
+							#str(array) results in an array without commas, which cannot be evaluated.
+							#Need to manipulate array string so it has commas.
+							
+							#print(type(dataset["PRIMARY"]))
+							#get values of subset and modify it
+							dataList = np.array2string(self.xc.subset_groups[subset_i].subsets[data_i][comp_i], separator=',')
+
+							code = code.replace("{Component}", dataList)
+							code = code.replace("nan,", "")
+							code = code.replace("nan","")
+							#print(code)
+							try:
+								print("evaluating ...")
+								answer = eval(code)
+							except:
+								print("Did not calculate")
+								answer = "NAN"
+							stop = timeit.default_timer()
+							print('Time: ', stop - start)  
+							subsetValues.append(answer)
+
+						#No components or predefined columns used: these are simple expressions like  1+1 or "test value"
+						else:
+							answer = eval(code)
+							subsetValues.append(answer)
+
+		#self.loadingMovie.stop()
+		self.loadingScreen.setInformativeText("Done!")
+		self.loadingScreen.close()
+		
+
+		'''
+		subset_branch = self.subsetTree.invisibleRootItem().child(1)
+		for subset_i in range (0, len(self.xc.subset_groups)):
+			for data_i in range (0, len(self.xc)):
+				for comp_i in range (0, len(self.xc[data_i].components)):
+					d
+		'''  
+		np.set_printoptions(threshold=False)
+		print(subsetValues)
+		self.widget.close()
+		print(self.state.layers)
+		return columnValues,subsetValues
+
+	def getActiveDatasetsInPlotLayer(self):
+		'''
+		Returns the list of datasets in the Plotlayer of the stats viewer
+		'''
+		names = []
+		#if 0, then return datasets
+		
+		for message in self.state.layers:
+			print(message)
+			#get the data name
+			if "label: " in str(message):
+				index1 = str(message).index("label: ") + len("label: ")
+				index2 = str(message).index(")\nvisible: ")
+				names.append(str(message)[index1:index2])
+			elif "data: " in str(message):
+				index1 = str(message).index("data: ") + len("data: ")
+				index2 = str(message).index(")\nvisible: ")
+				names.append(str(message)[index1:index2])
+			
+		print(names)
+		return names
+		
+	def changeNotationForCustomColumnValues(self,value):
+		if type(value) == str:
+			return value
+		if self.isSci:
+			# Format in scientific notation
+			string = "%." + str(self.num_sigs) + 'E'
+		else:
+			string = "%." + str(self.num_sigs) + 'F'
+
+		return string % value
+
+	def getSubsetArray(self, columnIndex):
+		temp = []
+		st = self.subsetTree.invisibleRootItem().child(1)
+		for x in range(0,st.childCount()):
+			for y in range(0, st.child(x).childCount()):
+				for z in range(0,st.child(x).child(y).childCount()):
+					item = self.subsetTree.indexFromItem(st.child(x).child(y).child(z))
+					if self.subsetTree.itemFromIndex(item).data(3,0) != None:
+						temp.append(self.subsetTree.itemFromIndex(item).data(columnIndex,0))
+		temp = [float(x.strip(' "')) for x in temp]
+		return temp
+	
+	def getColumnArray(self,columnIndex):
+		'''
+		return the calculated data for a custom column with columnIndex
+		'''
+		temp = []
+		st = self.subsetTree.invisibleRootItem().child(0)
+		for x in range(0,st.childCount()):
+			for y in range(0, st.child(x).childCount()):
+				item = self.subsetTree.indexFromItem(st.child(x).child(y))
+
+				if self.subsetTree.itemFromIndex(item).data(3,0) != None:
+					temp.append(self.subsetTree.itemFromIndex(item).data(columnIndex,0))
+		#subset
+		#st = self.subsetTree.invisibleRootItem().child(1)
+		#for x in range(0,st.childCount()):
+		#	for y in range(0, st.child(x).childCount()):
+		#		for z in range(0,st.child(x).child(y).childCount()):
+		#			item = self.subsetTree.indexFromItem(st.child(x).child(y).child(z))
+		#			if self.subsetTree.itemFromIndex(item).data(3,0) != None:
+		#				temp.append(self.subsetTree.itemFromIndex(item).data(columnIndex,0))
+		#print(temp)
+		temp = [float(x.strip(' "')) for x in temp]
+		return temp
+
+	def insertAttribute(self):
+		print("insert attribute")
+
+		attribute = "{" + str(self.statsCombo.currentText()) + "}"
+
+		#string  = QString(attribute)
+		#string.setTextColor(Qt.blue)
+		self.expressionEditor.insertPlainText(attribute)
+		'''
+		text = self.expressionEditor.toPlainText()
+		self.expressionEditor.clear()
+
+		html =""
+		addText = False
+		for index in range(0, len(text)):
+			if text[index] == "{":
+				html += "<p><span style=\"color: #3366ff;\"><strong>"
+			html+= text[index]
+			if text[index] == "}":
+				html += "</strong></span></p>"
+
+		self.expressionEditor.insertHtml(html)
+		'''
+
+	def expandLevel(self):
+		#subset view: tricky, there are only three levels for subsets but 4 for subsets
+		if self.tabs.currentIndex() == 0:
+
+
+			updateDataLevel = True
+			updateSubsetLevel = True
+			if self.subsetViewDataLevel >=1:
+				updateDataLevel = False
+			#if self.subsetViewSubsetLevel >=3:
+			#	updateSubsetLevel = False
+
+			if updateDataLevel:
+				self.subsetViewDataLevel += 1
+				self.expandLevelHelper(self.subsetViewDataLevel, self.subsetTree.invisibleRootItem().child(0))
+				self.expandLevelHelper(self.subsetViewDataLevel, self.subsetTree.invisibleRootItem().child(1))
+
+		#	if updateSubsetLevel:
+			#	self.subsetViewSubsetLevel += 1
+			#	self.expandLevelHelper(self.subsetViewSubsetLevel, self.subsetTree.invisibleRootItem().child(1))
+
+
+		#component view
+		elif self.tabs.currentIndex() == 1:
+			if self.componentViewLevel >= 2:
+				return
+			self.componentViewLevel  += 1
+			self.expandLevelHelper(self.componentViewLevel, self.componentTree.invisibleRootItem())
+
+	def expandLevelHelper(self, level, view):
+		'''
+		Heler method for minimizeLevel(self), recursive function to determine how deep the levels are
+		@param: level - the int of the current level of the viewer that is expanded
+		@param: view - the structure/viewtype that is being expanded
+		'''
+
+		if level > 0:
+			for i in range(0, view.childCount()):
+				view.child(i).setExpanded(True)
+				self.expandLevelHelper(level-1, view.child(i))
+
+		#else:
+			#for i in range(0, view.childCount()):
+				#view.child(i).setExpanded(True)
+
+	def minimizeLevel(self):
+		'''
+		Minimizes a level of nodes in the current view
+		'''
+		#subset view: tricky, there are only three levels for subsets but 4 for subsets
+		if self.tabs.currentIndex() == 0:
+			updateDataLevel = True
+			updateSubsetLevel = True
+			if self.subsetViewDataLevel <=0:
+				updateDataLevel = False
+			#if self.subsetViewSubsetLevel <=0:
+			#	updateSubsetLevel = False
+			if updateDataLevel:
+				self.subsetViewDataLevel -= 1
+				self.minimizeLevelHelper(self.subsetViewDataLevel, self.subsetTree.invisibleRootItem().child(0))
+				self.minimizeLevelHelper(self.subsetViewDataLevel, self.subsetTree.invisibleRootItem().child(1))
+
+			#if updateSubsetLevel:
+			#	self.subsetViewSubsetLevel -= 1
+			#	self.minimizeLevelHelper(self.subsetViewSubsetLevel, self.subsetTree.invisibleRootItem().child(1))
+
+		#component view
+		elif self.tabs.currentIndex() ==1:
+			if self.componentViewLevel <= 0:
+				return
+			self.componentViewLevel  -= 1
+			self.minimizeLevelHelper(self.componentViewLevel, self.componentTree.invisibleRootItem())
+
+	def minimizeLevelHelper(self, level, view):
+		'''
+		Heler method for minimizeLevel(self), recursive function to determine how deep the levels are
+		@param: level - the int of the current level of the viewer that is expanded
+		@param: view - the structure/viewtype that is being minimized
+		'''
+
+		if level > 0:
+			for i in range(0, view.childCount()):
+				self.minimizeLevelHelper(level-1, view.child(i))
+		else:
+			for i in range(0, view.childCount()):
+				view.child(i).setExpanded(False)
+
+	def pressedEventExportToViewer(self):
+
+
+
+		'''
+		self.exportViewerWindow = QMainWindow()
+        self.exportViewerWindow.resize(500,250)
+        self.exportViewerWindow.setWindowTitle("Data Viewer")
+        self.exportViewerLabel = QLabel()
+        self.exportViewerLabel.setText("Choose a new data viewer")
+		self.exportViewerLabel.
+        self.exportViewerWindow.setCentralWidget(self.exportViewerLabel)
+        self.exportViewerWindow.layout().setContentsMargins(10,10,20,20)
+        self.exportViewerWindow.setContentsMargins(10,10,20,20)
+        self.exportViewerWindow.show()
+		'''
+
+		df = self.getCurrentCalculated()
+		if len(df) > 1:
+
+			self.chooseViewerWidget = QWidget()
+
+			self.viewerCombo = QComboBox()
+			self.viewerCombo.addItem('Table Viewer')
+			self.viewerCombo.addItem('1D Histogram')
+			self.viewerCombo.addItem('1D Profile')
+			self.viewerCombo.addItem('2D Scatter')
+			self.viewerCombo.addItem('3D Scatter')
+
+			label = QLabel("Choose a new data viewer:")
+
+			layout1 = QHBoxLayout()
+			layout1.addWidget(label)
+			layout1.addWidget(self.viewerCombo)
+
+			okButton = QPushButton("Ok")
+			cancelButton = QPushButton("Cancel")
+
+			okButton.clicked.connect(self.openNewViewer)
+			cancelButton.clicked.connect(self.chooseViewerWidget.close)
+
+			self.newStatsDatasetName  = QLineEdit()
+			label2 = QLabel("Name your new dataset:")
+
+			layout2 = QHBoxLayout()
+			layout2.addWidget(label2)
+			layout2.addWidget(self.newStatsDatasetName)
+
+
+			layout3 = QHBoxLayout()
+			layout3.addWidget(okButton)
+			layout3.addWidget(cancelButton)
+
+			mainLayout = QVBoxLayout()
+			mainLayout.addLayout(layout1)
+			mainLayout.addLayout(layout2)
+			mainLayout.addLayout(layout3)
+
+			self.chooseViewerWidget.setLayout(mainLayout)
+			self.chooseViewerWidget.setWindowTitle("Export to Viewer")
+			self.chooseViewerWidget.show()
+
+	def pressedEventSaveToDC(self):
+
+		df = self.getCurrentCalculated()
+		if len(df) > 1:
+
+			self.saveStatsWidget = QWidget()
+
+
+
+			okButton = QPushButton("Ok")
+			cancelButton = QPushButton("Cancel")
+
+			okButton.clicked.connect(self.saveToDC)
+			cancelButton.clicked.connect(self.saveStatsWidget.close)
+
+			self.newStatsDatasetName  = QLineEdit()
+			label1 = QLabel("Name your new dataset:")
+
+			layout1 = QHBoxLayout()
+			layout1.addWidget(label1)
+			layout1.addWidget(self.newStatsDatasetName)
+
+
+			layout2 = QHBoxLayout()
+			layout2.addWidget(okButton)
+			layout2.addWidget(cancelButton)
+
+			mainLayout = QVBoxLayout()
+			mainLayout.addLayout(layout1)
+			mainLayout.addLayout(layout2)
+
+			self.saveStatsWidget.setLayout(mainLayout)
+			self.saveStatsWidget.setWindowTitle("Save Statistics to Data Collection")
+			self.saveStatsWidget.show()
+
+	def saveToDC(self):
+		df = self.getCurrentCalculated()
+		#viewerToOpen = self.viewerCombo.currentText()
+		datasetname = self.newStatsDatasetName.text()
+
+		if datasetname == '':
+			QMessageBox.warning(None,'Error','Must enter a name for new dataset')
+			return
+		if self.hasSameDatasetName(datasetname):
+			QMessageBox.warning(None,'Error','Dataset with this name already exists')
+			return
+
+
+
+		data = Data(label =  str(datasetname))
+		df = np.array(df)
+		#transpose list
+		df = df.T
+
+		for row in df:
+			data.add_component(row[1:], label = row[0])
+
+
+		self.xc.append(data)
+		self.saveStatsWidget.close()
+
+	def openNewViewer(self):
+		#print("openNewViewer")
+		#print(self.viewerCombo.currentText())
+		#print(self.newStatsDatasetName.text())
+
+		df = self.getCurrentCalculated()
+		viewerToOpen = self.viewerCombo.currentText()
+		datasetname = self.newStatsDatasetName.text()
+
+		if datasetname == '':
+			QMessageBox.warning(None,'Error','Must enter a name for new dataset')
+			return
+		if self.hasSameDatasetName(datasetname):
+			QMessageBox.warning(None,'Error','Dataset with this name already exists')
+			return
+
+
+
+		data = Data(label =  str(datasetname))
+		df = np.array(df)
+		#transpose list
+		df = df.T
+
+		for row in df:
+			data.add_component(row[1:], label = row[0])
+
+
+		self.xc.append(data)
+
+		if viewerToOpen == "Table Viewer":
+			viewer = self.session.application.new_data_viewer(TableViewer)
+			viewer.add_data(data)
+		elif viewerToOpen == "1D Histogram":
+			viewer = self.session.application.new_data_viewer(HistogramViewer)
+			viewer.add_data(data)
+		elif viewerToOpen == "1D Profile":
+			viewer = self.session.application.new_data_viewer(ProfileViewer)
+			viewer.add_data(data)
+		elif viewerToOpen == "2D Scatter":
+			viewer = self.session.application.new_data_viewer(ScatterViewer)
+			viewer.add_data(data)
+		elif viewerToOpen == "3D Scatter":
+			viewer = self.session.application.new_data_viewer(VispyScatterViewer)
+			viewer.add_data(data)
+
+
+		self.chooseViewerWidget.close()
+
+	def hasSameDatasetName(self, name):
+		for dataname in self.xc:
+			if name == dataname.label:
+				return True
+		return False
+
 	def calculateAll(self):
 		if self.tabs.currentIndex() == 0:
 			#self.subsetTree.selectAll()
 			data_branch = self.subsetTree.invisibleRootItem().child(0)
+			data_branch.setCheckState(0,2)
 			for data_i in range(0, data_branch.childCount()):
+				data_branch.child(data_i).setCheckState(0,2)
 				for comp_i in range(0,data_branch.child(data_i).childCount()):
 					data_branch.child(data_i).child(comp_i).setCheckState(0,2)
 			subset_branch = self.subsetTree.invisibleRootItem().child(1)
-			for subset_i in range(0, subset_branch.childCount()):
-				for data_i in range(0,subset_branch.child(subset_i).childCount()):
-					for comp_i in range(0,subset_branch.child(subset_i).child(data_i).childCount()):
-						subset_branch.child(subset_i).child(data_i).child(comp_i).setCheckState(0,2)
+			subset_branch.setCheckState(0,2)
+			self.check_status_helper(2,subset_branch)
 
 		elif self.tabs.currentIndex() ==1:
 			cTree = self.componentTree.invisibleRootItem()
 			for data_i in range(0, cTree.childCount()):
-				for comp_i in range(0,cTree.child(data_i).childCount()):
-					for subset_i in range(0, cTree.child(data_i).child(comp_i).childCount()):
-						cTree.child(data_i).child(comp_i).child(subset_i).setCheckState(0,2)
-		
+				cTree.child(data_i).setCheckState(0,2)
+				self.check_status_helper(2, cTree.child(data_i))
+
 		self.pressedEventCalculate()
 
 	def plotLayerNames(self):
@@ -877,7 +1637,7 @@ class StatsDataViewer(DataViewer):
 			#get zorder
 			index1 = str(message).index("zorder: ") + len("zorder: ")
 			zorder_rank = str(message)[index1:]
-			#append the information 
+			#append the information
 			new_names.append((plot_name,visibility_status,zorder_rank))
 			only_names.append(plot_name)
 		#print(np.array(new_names))
@@ -885,7 +1645,7 @@ class StatsDataViewer(DataViewer):
 
 	def setdiff2d(self, A, B):
 		'''
-		Set difference of 2d arrays: code copied from user from post: 
+		Set difference of 2d arrays: code copied from user from post:
 		https://stackoverflow.com/questions/64414944/hot-to-get-the-set-difference-of-two-2d-numpy-arrays-or-equivalent-of-np-setdif
 		'''
 		nrows, ncols = A.shape
@@ -898,7 +1658,7 @@ class StatsDataViewer(DataViewer):
 		Method that activates when the home button is pressed. This method will reset the statsviewer to its original state if any values are dragged around
 		and out of order. Also a good button to press when a bug stops the viewer so it resets everything.
 		'''
-		print("Homebutton event")
+		#print("Homebutton event")
 		#clear activePlotLayerList so it redraws everything
 		self.activePlotLayerList = []
 		#clear subsets so it redraws subsets properly
@@ -914,11 +1674,11 @@ class StatsDataViewer(DataViewer):
 
 			#check visibility change
 			if layerInfo[1] == 'True' and not layerInfo[0] in self.activePlotLayerList:
-				print("Homeevent info: "+layerInfo[0])
+				#print("Homeevent info: "+layerInfo[0])
 				#print("add data to viewer")
 				if "Subset" in layerInfo[0]:
 					self.subsetCreatedMessage(layerInfo[0])
-				else: 
+				else:
 					self.newDataAddedMessage(layerInfo[0])
 
 				self.activePlotLayerList.append(layerInfo[0])
@@ -928,13 +1688,13 @@ class StatsDataViewer(DataViewer):
 				#print("delete data from viewer")
 				if "Subset" in layerInfo[0]:
 					self.deletePlotLayers('subset',layerInfo[0])
-				else: 
+				else:
 					self.deletePlotLayers('dataset',layerInfo[0])
 
 				self.activePlotLayerList.remove(layerInfo[0])
 
 			#check if layer was deleted in the plot layer
-			 
+
 
 			#print(layerInfo)
 		dummy, self.plotlayer_names = self.plotLayerNames()
@@ -945,10 +1705,10 @@ class StatsDataViewer(DataViewer):
 		Method called whenever a plot layer (the side panel that controls what shows up on the viewer) is changed
 		@callbacklist - the callback list that contains the plotlayers (this method doesn't use this instead calls self.state to access plot layers)
 		'''
-		
+
 		#Things that happen in a layer change: Data/subset added or removed, zorder change, and visibility toggled
 		# color or name can be changed, but this functionality already added in message listeners, no need to implement here
-		print("detected layer change")
+		#print("detected layer change")
 		updatedPlotLayers, updatedPlotLayerNames = self.plotLayerNames()
 		#print("self ", self.plotlayer_names)
 		#print("updated ", updatedPlotLayerNames)
@@ -957,7 +1717,7 @@ class StatsDataViewer(DataViewer):
 		#print("to be removed ",toBeRemovedLayer)
 
 		if len(toBeRemovedLayer) != 0:
-			print("removal started")
+			#print("removal started")
 			toBeRemovedLayer = toBeRemovedLayer[0]
 			#remove data/subset if it was removed in the plot layer
 			if "Data (label: " in toBeRemovedLayer:
@@ -978,7 +1738,7 @@ class StatsDataViewer(DataViewer):
 					if cTree.child(data_i).data(0,0) == remove_name:
 						cTree.removeChild(cTree.child(data_i))
 
-				
+
 			elif "Subset: " in toBeRemovedLayer:
 				#if subset was removed
 				index1 = str(toBeRemovedLayer).index("Subset: ") + len("Subset: ")
@@ -1016,7 +1776,7 @@ class StatsDataViewer(DataViewer):
 
 				if "Subset" in layerInfo[0]:
 					self.subsetCreatedMessage(layerInfo[0])
-				else: 
+				else:
 					self.newDataAddedMessage(layerInfo[0])
 
 				self.activePlotLayerList.append(layerInfo[0])
@@ -1028,25 +1788,25 @@ class StatsDataViewer(DataViewer):
 				#print("delete data from viewer")
 				if "Subset" in layerInfo[0]:
 					self.deletePlotLayers('subset',layerInfo[0])
-				else: 
+				else:
 					self.deletePlotLayers('dataset',layerInfo[0])
 
 				self.activePlotLayerList.remove(layerInfo[0])
 
 			#check if layer was deleted in the plot layer
-			#self.disableNASubsets() 
+			#self.disableNASubsets()
 
 			#print(layerInfo)
 		dummy, self.plotlayer_names = self.plotLayerNames()
 		#self.disableNASubsets()
-		#self.homeButtonEvent() 
+		#self.homeButtonEvent()
 		#print("done")
-	
+
 	def repopulateViewer(self):
 		"""
 		Repoplulates the Tree with values that are already calculated
 		"""
-		newly_selected = self.stCalculatedItems 
+		newly_selected = self.stCalculatedItems
 		#print(newly_selected)
 		for index in range (0, len(newly_selected)):
 			#print("input: " ,newly_selected[index][1],newly_selected[index][2],newly_selected[index][3] )
@@ -1100,12 +1860,12 @@ class StatsDataViewer(DataViewer):
 	def findIndexItem(self, subsetName, dataName, compName, view):
 		#print("find ",subsetName)
 		if view == 'subsetView':
-			#subset 
+			#subset
 			subset_branch = self.subsetTree.invisibleRootItem().child(1)
 			for subset_i in range (0, subset_branch.childCount()):
 				if subsetName == subset_branch.child(subset_i).data(0,0):
 					#if subset is same, then modify dataname to fit subset name in subset branch since this is a subset
-					dataName = subsetName+ " ("+ dataName +")" 
+					dataName = subsetName+ " ("+ dataName +")"
 					for data_i in range (0, subset_branch.child(subset_i).childCount()):
 						if dataName == subset_branch.child(subset_i).child(data_i).data(0,0):
 							for comp_i in range (0, subset_branch.child(subset_i).child(data_i).childCount()):
@@ -1139,7 +1899,7 @@ class StatsDataViewer(DataViewer):
 		#index1 = str(message).index("(label: ") + len("(label: ")
 		#index2 = str(message).index(")")
 		#dataname = str(message)[index1:index2]
-		print("deletePlotLayers")
+		#print("deletePlotLayers")
 		temp = -1
 		if deletedType == 'dataset':
 			temp = 0
@@ -1158,7 +1918,7 @@ class StatsDataViewer(DataViewer):
 			dataname = str(message)[index1:index2]
 			datasetname = str(message)[index3:index4-1]
 			message = dataname + " (" + datasetname + ")"
-			
+
 			#current_list = self.subsetNames()
 		else:
 			raise Exception("Invalid deleted type, method deletePlotLayers wasnt called correctly")
@@ -1184,7 +1944,7 @@ class StatsDataViewer(DataViewer):
 					if past_list[i].data(0,0) == dataname:
 						data_branch.removeChild(past_list[i])
 						break
-					
+
 					#if subset, delete the subset of the corresponding dataset
 					#else:
 						#for subdata in range(0, data_branch.child(i).childCount()):
@@ -1192,7 +1952,7 @@ class StatsDataViewer(DataViewer):
 							#if data_branch.child(i).child(subdata).data(0,0) == message:
 							#	data_branch.child(i).removeChild(data_branch.child(i).child(subdata))
 								#break
-					
+
 
 			'''Component View'''
 			#data branch of tree
@@ -1201,14 +1961,14 @@ class StatsDataViewer(DataViewer):
 			#print(dataname)
 
 			if deletedType == 'dataset':
-				#since removing in a loop, indexes will skip. So loop and remove backwards 
+				#since removing in a loop, indexes will skip. So loop and remove backwards
 				for data_i in range(data_branch.childCount()-1, -1,-1):
 					if data_branch.child(data_i).data(0,0) == dataname:
 						data_branch.removeChild(data_branch.child(data_i))
 
 			elif deletedType == 'subset':
 				#print("removing data: ",dataname)
-				#since removing in a loop, indexes will skip. So loop and remove backwards 
+				#since removing in a loop, indexes will skip. So loop and remove backwards
 				for data_i in range(data_branch.childCount()-1, -1,-1):
 					#if data_branch.child(data_i).data(0,0) == datasetname:
 					for comp_i in range(data_branch.child(data_i).childCount()-1 ,-1, -1):
@@ -1227,7 +1987,7 @@ class StatsDataViewer(DataViewer):
 		except:
 			pass
 			#self.subset_set.remove(message)
-			
+
 				#self.subset_set.remove(str(toBeRemoved))
 				#self.subset_dict.pop(str(toBeRemovedQItem))
 
@@ -1235,7 +1995,7 @@ class StatsDataViewer(DataViewer):
 		'''
 		Closes all open pop-up windows if open
 		'''
-		print("closed stats")
+		#print("closed stats")
 		self.decimalWindow.destroy()
 		self.manualCalcWindow.destroy()
 		self.instructionWindow.destroy()
@@ -1348,13 +2108,11 @@ class StatsDataViewer(DataViewer):
 		self.instructionWindow.setWindowTitle("Instructions")
 		self.instructionLabel = QLabel()
 		self.instructionLabel.setTextFormat(1)
-		
-		#self.instructionLabel.setText("<h2 style=\"text-align: center;\"><img src=" +str(INSTRUCTIONS_LOGO)+ " width=\"46\" height=\"46\" />&nbsp;<strong>Instructions:</strong></h2><p>Tick the rows to calculate basic statistics</p><p>Click between Subset and Component views</p><p><img src="+str(HOME_LOGO)+" width=\"30\" height=\"30\" />&nbsp;Resets the viewer to default layout</p><p><img src="+str(CALCULATE_LOGO)+" width=\"30\" height=\"30\"/>&nbsp;Calculate entire view</p><p><img src="+str(COLLAPSE_LOGO)+" width=\"30\" height=\"30\"/>&nbsp;Minimize a level</p><p><img src="+str(EXPAND_LOGO)+" width=\"30\" height=\"30\"/>&nbsp;Expand a level</p><p><strong><img src="+str(SORT_LOGO)+" width=\"30\" height=\"30\" />&nbsp;</strong>Enables sorting, selecting a column will sort rows accordingly</p><p><img src="+ str(NOTATION_LOGO)+ " width=\"30\" height=\"30\" />&nbsp;Toggles scientific notation and decimal form</p><p><img src="+ str(SAVE_LOGO) +" width=\"30\" height=\"30\" />&nbsp;Exports the current open tree view</p><p><img src="+str(SETTINGS_LOGO)+" width=\"30\" height=\"30\" />&nbsp;Change # of decimal points, instructions, etc</p><p>&nbsp;</p>")
 		self.instructionLabel.setText("<h2 style=\"text-align: center;\"><img src=" +str(INSTRUCTIONS_LOGO)+ " width=\"46\" height=\"46\" />&nbsp;<strong>Instructions:</strong></h2><p>Tick the rows to calculate basic statistics</p><p>Click between Subset and Component views</p><p><img src="+ str(SAVE_LOGO) +" width=\"30\" height=\"30\" />&nbsp;Exports the current open tree view</p><p><img src="+str(HOME_LOGO)+" width=\"30\" height=\"30\" />&nbsp;Resets the viewer to default layout</p><p><img src="+str(CALCULATE_LOGO)+" width=\"30\" height=\"30\"/>&nbsp;Calculate entire view</p><p><img src="+str(COLLAPSE_LOGO)+" width=\"30\" height=\"30\"/>&nbsp;Minimize a level</p><p><img src="+str(EXPAND_LOGO)+" width=\"30\" height=\"30\"/>&nbsp;Expand a level</p><p><img src="+ str(NOTATION_LOGO)+ " width=\"30\" height=\"30\" />&nbsp;Toggles scientific notation and decimal form</p><p><strong><img src="+str(SORT_LOGO)+" width=\"30\" height=\"30\" />&nbsp;</strong>Enables sorting, selecting a column will sort rows accordingly</p><p><img src="+ str(INSTRUCTIONS_LOGO)+ " width=\"30\" height=\"30\" />&nbsp;Read instructions</p><p><img src="+str(SETTINGS_LOGO)+" width=\"30\" height=\"30\" />&nbsp;Change # of decimal points, instructions, etc</p><p>&nbsp;</p>")
+		#self.instructionLabel.setText("<h2 style=\"text-align: center;\"><strong>Instructions:</strong></h2><p>Check the rows to calculate basic statistics</p><p>Cycle between Subset and Component views with the tabs</p><p><span style=\"color: #ff0000;\"><strong>Save</strong></span> Exports the current open tree view</p><p><span style=\"color: #ff0000;\"><strong>Home</strong></span> Resets viewer to default state</p><p><span style=\"color: #ff0000;\"><strong>Notation</strong></span> Toggles scientific notation and decimal form</p><p><span style=\"color: #ff0000;\"><strong>Sort</strong></span> Enables sorting, selecting a column will sort rows accordingly</p><p><span style=\"color: #ff0000;\"><strong>Instructions</strong></span> See how the viewer works</p><p><span style=\"color: #ff0000;\"><strong>Settings</strong></span> Change # of decimal points or toggle manual mode</p>")
 
-
-		#self.instructionLabel.setText("<h2 style=\"text-align: center;\"><strong>Instructions:</strong></h2><p>Check the rows to calculate basic statistics</p><p>Cycle between Subset and Component views with the tabs</p><p><span style=\"color: #ff0000;\"><strong>Save</strong></span> Exports the current open tree view</p><p><span style=\"color: #ff0000;\"><strong>Home</strong></span> Resets viewer to default state</p><p><span style=\"color: #ff0000;\"><strong>Notation</strong></span> Toggles scientific notation and decimal form</p><p><span style=\"color: #ff0000;\"><strong>Sort</strong></span> Enables sorting, selecting a column will sort rows accordingly</p><p><span style=\"color: #ff0000;\"><strong>Instructions</strong></span> See how the viewer works</p><p><span style=\"color: #ff0000;\"><strong>Settings</strong></span> Change # of decimal points or toggle manual mode</p>")	
 		#self.instructionLabel.setText("<h2 style=\"text-align: center;\"><img src=glue_instructions.png width=\"46\" height=\"46\" />&nbsp;<strong>Instructions:</strong></h2><p>Check the rows to calculate basic statistics<p><p>Cycle between Subset and Component views with the tabs<p><p><img src=\"glue_home\" />&nbsp; Resets the viewer to default layout<p><p><span style=\"color: #ff0000;\"><strong><img src=\"SORT_LOGO\" width=\"30\" height=\"30\"/>&nbsp;</strong></span>Enables sorting, selecting a column will sort rows accordingly<p><p><img src=\"/Users/jk317/Glue/icons/glue_scientific_notation.png\" width=\"30\" height=\"30\"/>&nbsp;Toggles scientific notation and decimal form<p><p><img src='glue_filesave' width=\"30\" height=\"30\"/>Exports the current open tree view<p><p><img src=\"/Users/jk317/Glue/icons/glue_settings.png\"width=\"30\" height=\"30\" />&nbsp;to change # of decimal points or to read more instructions<p>")
+		#self.instructionLabel.setText("<h2 style=\"text-align: center;\"><img src=\"/Users/jk317/Glue/icons/glue_instructions.png\" width=\"46\" height=\"46\" />&nbsp;<strong>Instructions:</strong></h2> <ul><li>Check the rows to calculate basic statistics</li><li>Cycle between Subset and Component views with the tabs</li><li>Press <span style=\"color: #ff0000;\"><strong><em>Home</em></strong></span> to collapse all rows</li><li>Press <span style=\"color: #ff0000;\"><strong><em>Refresh</em></strong></span> after linking data to check for possible calculations</li><li>Press <span style=\"color: #ff0000;\"><strong><em>Sort</em> </strong></span>to enable sorting, selecting a column will sort rows accordingly</li><li>Press <span style=\"color: #ff0000;\"><strong><em>Convert</em></strong></span> to toggle scientific notation and decimal form</li><li>Press <strong><span style=\"color: #ff0000;\"><em>Export</em></span></strong> to export the current open tree view</li><li>Press <strong><span style=\"color: #ff0000;\"><em>Settings</em></span></strong> to change # of decimal points or to read more instructions</li></ul>")
 		self.instructionWindow.setCentralWidget(self.instructionLabel)
 
 		self.instructionWindow.layout().setContentsMargins(10,10,20,20)
@@ -1495,11 +2253,11 @@ class StatsDataViewer(DataViewer):
 		hub.subscribe(self, DataRenameComponentMessage, handler = self.dataRenameComponentMessage)
 		hub.subscribe(self, DataRemoveComponentMessage, handler = self.dataRemoveComponentMessage)
 
-		
+
 
 		#hub.subscribe(self, DataCollectionAddMessage, handler = self.newDataAddedMessage)
 		#hub.subscribe(self, LayerArtistDisabledMessage, handler = self.layerArtistDisabledMessage)
-	
+
 	def dataRemoveComponentMessage(self, message):
 		'''
 		Removes the data component from the stats viewer if applicable
@@ -1608,7 +2366,7 @@ class StatsDataViewer(DataViewer):
 	def dataAddComponentMessage(self, message):
 
 		'''
-		Updates the stats viewer if a component is added to a data set in the viewer. 
+		Updates the stats viewer if a component is added to a data set in the viewer.
 		@param message: Message given by the event, contains details about how it was triggered
 		'''
 
@@ -1635,7 +2393,7 @@ class StatsDataViewer(DataViewer):
 					j = sTree.child(x).childCount()
 			#the index of the dataset in dc
 			i = self.data_names.index(dataname)
-			print(j, self.data_names)
+			#print(j, self.data_names)
 			childItem = QTreeWidgetItem(sParentItem)
 			childItem.setCheckState(0, 0)
 			childItem.setData(0, 0, '{}'.format(str(self.xc[i].components[j])))
@@ -1644,27 +2402,27 @@ class StatsDataViewer(DataViewer):
 			#component view
 			#print("started component view")
 			cTree = self.componentTree.invisibleRootItem()
-			#find parent item 
+			#find parent item
 			for x in range(0, cTree.childCount()):
 				if cTree.child(x).data(0,0) == dataname:
 					cParentItem = cTree.child(x)
 					#print("found parent")
 					#the index of the component in dc
 					k = cTree.child(x).childCount()
-		
+
 			#add the component to the viewer
 			child = QTreeWidgetItem(cParentItem)
 			child.setData(0,0, '{}'.format(str(self.xc[i].components[j])))
 			#child.setIcon(0, helpers.layer_icon(self.xc[i]))
 			child.setCheckState(0, 0)
 			child.setExpanded(True)
-			
-			#add the all data section to the component 
+
+			#add the all data section to the component
 			childtwo  = QTreeWidgetItem(child)
 			childtwo.setData(0, 0, '{}'.format('All data (' + self.xc.labels[i] + ')'))
 			childtwo.setIcon(0, helpers.layer_icon(self.xc[i]))
 			childtwo.setCheckState(0, 0)
-				
+
 			#if there are subsets, then add to the new component
 			if not len(self.xc.subset_groups) == 0:
 				disableSubset = False
@@ -1686,7 +2444,7 @@ class StatsDataViewer(DataViewer):
 					self.num_rows = self.num_rows + 1
 			#print("ended component view")
 		self.component_names = self.componentNames()
-	
+
 	def layerArtistDisabledMessage(self,message):
 		print("Layer artist disabled")
 		#print(message)
@@ -1695,9 +2453,9 @@ class StatsDataViewer(DataViewer):
 		'''
 		detects when a plot layer becomes checked/unchecked
 		'''
-		print("layer artist check/uncheck detected")
+		#print("layer artist check/uncheck detected")
 
-		print(message)
+		#print(message)
 		#print("hi")
 
 	def editSubsetMessage(self, message):
@@ -1800,7 +2558,7 @@ class StatsDataViewer(DataViewer):
 		else:
 			#if item.childCount() == 0 and
 
-			
+
 			if item.checkState(0):
 				#if checked before, or has no children(single component calculation) then act like automatic
 				if item in self.alreadyChecked or item.childCount() == 0:
@@ -1903,7 +2661,7 @@ class StatsDataViewer(DataViewer):
 		@param message: Message given by the event, contains details about how it was triggered
 		'''
 		#print(message)
-		print("update detected")
+		#print("update detected")
 		index1 = str(message).index("Subset: ") + len("Subset: ")
 		index2 = str(message).index(" (data: ")
 		index3 = str(message).index(")")
@@ -2018,7 +2776,7 @@ class StatsDataViewer(DataViewer):
 			#update the info on the active plot layers
 			self.activePlotLayerList.remove("Subset: "+old_name+ data_name +")")
 			self.activePlotLayerList.append("Subset: "+new_name+ data_name +")")
-	
+
 	def dataUpdateMessage(self, message):
 		'''
 		Updates the attributes of the edited dataset (glue's left side panel info - names and color), size doesnt matter for this viewer
@@ -2078,7 +2836,7 @@ class StatsDataViewer(DataViewer):
 				#print(new_name)
 				subset_branch = self.subsetTree.invisibleRootItem().child(1)
 				child_count = subset_branch.childCount()
-				for i in range(child_count):    
+				for i in range(child_count):
 					component_count = subset_branch.child(i).childCount()
 					for x in range(component_count):
 						#print(old_name)
@@ -2086,7 +2844,7 @@ class StatsDataViewer(DataViewer):
 						if "(" + str(old_name) + ")" in str(subset_branch.child(i).child(x).data(0,0)):
 							new_label = str(subset_branch.child(i).child(x).data(0,0)).replace(str(old_name),str(new_name))
 							subset_branch.child(i).child(x).setData(0,0,new_label)
-				
+
 			#update calculated values name
 			for x in range(0, len(self.stCalculatedItems)):
 				for y in range(0,len(self.stCalculatedItems[x])):
@@ -2101,7 +2859,7 @@ class StatsDataViewer(DataViewer):
 				#print(x)
 			#self.activePlotLayerList.remove("Data (label: "+old_name+")")
 			#self.activePlotLayerList.append("Data (label: "+new_name+")")
-	
+
 	def componentViewDataUpdateHelper(self, viewType, old_name, new_name):
 		'''
 		Updates the component view if a data atrribute is changed
@@ -2189,7 +2947,7 @@ class StatsDataViewer(DataViewer):
 		name = str(message)[index1:index2]
 		self.data_names = self.xc.labels
 		'''For subset view'''
-		
+
 		parentItem = QTreeWidgetItem(self.dataItem)
 		parentItem.setCheckState(0, 0)
 		i = self.data_names.index(name)
@@ -2207,9 +2965,9 @@ class StatsDataViewer(DataViewer):
 			# Add to the subset_dict
 			key = self.xc[i].label + self.xc[i].components[j].label + "All data" + self.xc[i].label
 			self.num_rows = self.num_rows + 1
-		
+
 		'''For component view'''
-		
+
 		grandparent = QTreeWidgetItem(self.componentTree)
 		grandparent.setData(0, 0, '{}'.format(self.xc.labels[i]))
 		grandparent.setIcon(0, helpers.layer_icon(self.xc[i]))
@@ -2250,6 +3008,8 @@ class StatsDataViewer(DataViewer):
 		self.data_names = self.xc.labels
 		self.subsetTree.expandToDepth(1)
 		self.componentTree.expandToDepth(1)
+		self.subsetViewDataLevel = 1
+		self.componentViewLevel = 2
 		self.minimizeGrayedData()
 		if self.xc[i].size > 1000000 :
 			self.showLargeDatasetWarning()
@@ -2261,8 +3021,8 @@ class StatsDataViewer(DataViewer):
 		Adds a new subset to the viewer when new subset is created
 		@param message: Message given by the event, contains details about how it was triggered
 		'''
-		
-		print("detected new subset creation:", message)
+
+		#print("detected new subset creation:", message)
 		#print(message)
 		#print("Before:")
 		#print(self.state.layers)
@@ -2296,7 +3056,7 @@ class StatsDataViewer(DataViewer):
 			#print("Current subdataset:",current_subdataset)
 			##print("data ", datasetname)
 			#grandparent = self.findSubsetItem(current_subset)
-			
+
 			for i in range(0, len(self.xc)):
 
 				#if self.xc[i].label == datasetname:
@@ -2309,7 +3069,7 @@ class StatsDataViewer(DataViewer):
 
 				disableSubset1 = False
 				temp1 = False
-				
+
 
 				for k in range(0, len(self.xc[i].components)):
 					#print("added:",i,j,k)
@@ -2318,11 +3078,12 @@ class StatsDataViewer(DataViewer):
 					child.setIcon(0, helpers.layer_icon(self.xc.subset_groups[j]))
 					child.setCheckState(0, 0)
 					child.setExpanded(True)
-					
+
 					if (not disableSubset1) and (not temp1):
 						try:
-							self.xc[i].compute_statistic('minimum', self.xc[i].subsets[j].components[k], subset_state=self.xc.subset_groups[j].subset_state)
+							x = self.xc[i].compute_statistic('minimum', self.xc[i].subsets[j].components[k], subset_state=self.xc.subset_groups[j].subset_state)
 							temp1 = True
+
 						except:
 							parent.setData(0, Qt.CheckStateRole, QVariant())
 							parent.setForeground(0,QtGui.QBrush(Qt.gray))
@@ -2333,17 +3094,17 @@ class StatsDataViewer(DataViewer):
 						child.setData(0, Qt.CheckStateRole, QVariant())
 						child.setForeground(0,QtGui.QBrush(Qt.gray))
 
-					
+
 
 			#print("component view making")
 			'''Component View'''
-			
+
 			for i in range(0,self.componentTree.invisibleRootItem().childCount()):
 				#if self.xc[i].label == datasetname:
 				parent = self.componentTree.invisibleRootItem().child(i)
 				disableSubset2 = False
 				temp2 = False
-				
+
 				for k in range(0,parent.childCount()):
 					#print("component made")
 					component = parent.child(k)
@@ -2352,7 +3113,7 @@ class StatsDataViewer(DataViewer):
 					childtwo.setData(0, 0, '{}'.format(current_subset))
 					childtwo.setIcon(0, helpers.layer_icon(self.xc.subset_groups[j]))
 					childtwo.setCheckState(0,0)
-					
+
 					if (not disableSubset2) and (not temp2):
 						try:
 							self.xc[i].compute_statistic('minimum', self.xc[i].subsets[j].components[k], subset_state=self.xc.subset_groups[j].subset_state)
@@ -2365,15 +3126,16 @@ class StatsDataViewer(DataViewer):
 						childtwo.setForeground(0,QtGui.QBrush(Qt.gray))
 
 			self.subset_set.add(current_subset)
-			#self.subset_set.add(current_subdataset)		
+			#self.subset_set.add(current_subdataset)
 			self.subset_names = self.subsetNames()
 			#self.subset_dict.update({current_subset : count})
 			self.subset_count += 1
-			#print("done making subset")  
+			#print("done making subset")
 			#print(self.state.layers)
 		self.minimizeGrayedData()
+		#self.disableNASubsets()
 
-	def disableNASubsets(self):	
+	def disableNASubsets(self):
 		#print("disable NA Subsets")
 		subset_branch = self.subsetTree.invisibleRootItem().child(1)
 		for subset_i in range(0,subset_branch.childCount()):
@@ -2383,11 +3145,11 @@ class StatsDataViewer(DataViewer):
 				for comp_i in range(0, subset_branch.child(subset_i).child(data_i).childCount()):
 					if (not disableSubset) and (not temp):
 						try :
-							
+
 							mean_val = self.xc[data_i].compute_statistic('mean', self.xc[data_i].subsets[subset_i].components[comp_i], subset_state=self.xc[data_i].subsets[subset_i].subset_state)
 							print(mean_val)
-							if math.isnan(mean_val):
-								raise Exception("nan")
+							if str(mean_val) =="nan":
+								raise Exception()
 							temp = True
 						except:
 							parent = subset_branch.child(subset_i).child(data_i)
@@ -2539,7 +3301,7 @@ class StatsDataViewer(DataViewer):
 		self.selected_indices = []
 		showNANPopup = False
 		#determines whether or not to show the NAN error: the subset is too small/no intersection and has no values to calculate
-		
+
 
 		# create list of rows to calculate
 		# calculate for subset view
@@ -2551,10 +3313,10 @@ class StatsDataViewer(DataViewer):
 				for comp_i in range (0, data_branch.child(data_i).childCount()):
 					# if checked, add to selected list
 					if data_branch.child(data_i).child(comp_i).checkState(0):
-						self.selected_indices.append( 
+						self.selected_indices.append(
 							#adding item, subset label, data label, and component label
 							[self.subsetTree.indexFromItem(data_branch.child(data_i).child(comp_i)),
-							"All data", 
+							"All data",
 							data_branch.child(data_i).data(0,0),
 							data_branch.child(data_i).child(comp_i).data(0,0)])
 
@@ -2570,7 +3332,7 @@ class StatsDataViewer(DataViewer):
 								self.selected_indices.append(
 									#adding item, subset label, data label, and component label
 									[self.subsetTree.indexFromItem(subset_branch.child(subset_i).child(data_i).child(comp_i)),
-									subset_branch.child(subset_i).data(0,0), 
+									subset_branch.child(subset_i).data(0,0),
 									subset_branch.child(subset_i).child(data_i).data(0,0),
 									subset_branch.child(subset_i).child(data_i).child(comp_i).data(0,0)])
 						except:
@@ -2584,7 +3346,7 @@ class StatsDataViewer(DataViewer):
 				# Check which view mode the tree is in to get the correct indices
 				#data_i = newly_selected[index].parent().row()
 				#comp_i = newly_selected[index].row()
-				
+
 				#Finds index of the needed data that is in the data collection. The index of the tree and the data collection is not necessarily the same.
 				subset_i,data_i,comp_i = self.findIndexInDc(newly_selected[index][1],newly_selected[index][2],newly_selected[index][3])
 
@@ -2597,7 +3359,7 @@ class StatsDataViewer(DataViewer):
 					# Run standard data stats
 					new_data = self.runDataStats(data_i, comp_i)
 
-			
+
 				#populate the subset view
 				for col_index in range (3, len(new_data)):
 					if new_data[col_index] == "NAN":
@@ -2605,8 +3367,6 @@ class StatsDataViewer(DataViewer):
 						self.subsetTree.itemFromIndex(newly_selected[index][0]).setData(col_index-2, 0, "Error")
 					else:
 						self.subsetTree.itemFromIndex(newly_selected[index][0]).setData(col_index-2, 0, new_data[col_index])
-				
-	
 
 		#if calculating component view
 		elif self.tabs.currentIndex() == 1:
@@ -2660,17 +3420,17 @@ class StatsDataViewer(DataViewer):
 						self.componentTree.itemFromIndex(newly_selected[index][0]).setData(col_index-2, 0, "Error")
 					else:
 						self.componentTree.itemFromIndex(newly_selected[index][0]).setData(col_index-2, 0, new_data[col_index])
-
-		
+						#Removes numerical values for categorical variables and replace with NAN
+			
 
 		if showNANPopup:
 			self.showNANPopup()
-			
-	def findIndexInDc(self, subsetName, dataName, compName):	
+
+	def findIndexInDc(self, subsetName, dataName, compName):
 		'''
 		Finds the index of the subset, data, and component in the data collection that corresponds to the item in the viewer.
 		@param subsetName: name of subset "All data" if n/a because it is calculating all data
-		@param dataName: name of the dataset 
+		@param dataName: name of the dataset
 		@param compName: name of the component
 		'''
 
@@ -2691,7 +3451,7 @@ class StatsDataViewer(DataViewer):
 				for y in range (0, len(self.xc[x].components)):
 					if self.xc[x].components[y].label == compName:
 						comp_i = y
-		
+
 
 		#if subset
 		else:
@@ -2702,7 +3462,7 @@ class StatsDataViewer(DataViewer):
 				dataName = str(dataName)[i_1:i_2]
 			except:
 				#in component view, the subset may be All Data(x)
-				if "All data (" in subsetName:	
+				if "All data (" in subsetName:
 					subset_i = -1
 
 			#find data index
@@ -2714,7 +3474,7 @@ class StatsDataViewer(DataViewer):
 				for y in range (0, len(self.xc[x].components)):
 					if self.xc[x].components[y].label == compName:
 						comp_i = y
-			#find subset index			
+			#find subset index
 			for z in range (0, len(self.xc[data_i].subsets)):
 				if subsetName == self.xc[data_i].subsets[z].label:
 					subset_i = z
@@ -2737,16 +3497,19 @@ class StatsDataViewer(DataViewer):
 		#if the open tab is subset view
 		if self.tabs.currentIndex() == 0:
 			#data
-			currentCalculated.append(['Subset','Dataset','Component','Mean','Median','Minimum','Maximum','Sum'])
+			exportHeading = ['Subset','Dataset', 'Component']+self.headings[1:]
+			currentCalculated.append(exportHeading)
 			st = self.subsetTree.invisibleRootItem().child(0)
 			for x in range(0,st.childCount()):
 				for y in range(0, st.child(x).childCount()):
 					item = self.subsetTree.indexFromItem(st.child(x).child(y))
-					if self.subsetTree.itemFromIndex(item).data(3,0) != None:
+					calculatedValueExists = self.checkIfCalculated(st.child(x).child(y))
+					#if self.subsetTree.itemFromIndex(item).data(3,0) != None:
+					if calculatedValueExists:
 						temp = []
 						temp.append('All data') # no subset
 						temp.append(st.child(x).data(0,0)) # dataset
-						for t in range(0, 6):
+						for t in range(0, len(self.headings)):
 							temp.append(self.subsetTree.itemFromIndex(item).data(t,0))
 						currentCalculated.append(temp)
 			#subset
@@ -2755,7 +3518,9 @@ class StatsDataViewer(DataViewer):
 				for y in range(0, st.child(x).childCount()):
 					for z in range(0,st.child(x).child(y).childCount()):
 						item = self.subsetTree.indexFromItem(st.child(x).child(y).child(z))
-						if self.subsetTree.itemFromIndex(item).data(3,0) != None:
+						calculatedValueExists = self.checkIfCalculated(st.child(x).child(y))
+						#if self.subsetTree.itemFromIndex(item).data(3,0) != None:
+						if calculatedValueExists:
 							temp = []
 							temp.append(st.child(x).child(y).data(0,0)) #subset(data) name
 							tempStr = str(st.child(x).child(y).data(0,0))
@@ -2763,29 +3528,42 @@ class StatsDataViewer(DataViewer):
 							index2 = tempStr.index(")")
 							dataset_name = tempStr[index1:index2]
 							temp.append(dataset_name) #dataset name
-							for t in range(0, 6):
+							for t in range(0, len(self.headings)):
 								temp.append(self.subsetTree.itemFromIndex(item).data(t,0))
 							currentCalculated.append(temp)
 		#if component view is open
 		elif self.tabs.currentIndex() == 1:
-			currentCalculated.append(['Dataset','Component','Subset','Mean','Median','Minimum','Maximum','Sum'])
+			exportHeading = ['Dataset', 'Component','Subset']+self.headings[1:]
+			currentCalculated.append(exportHeading)
 			ct = self.componentTree.invisibleRootItem()
 			for x in range(0, ct.childCount()):
 				for y in range(0, ct.child(x).childCount()):
 					for z in range(0,ct.child(x).child(y).childCount()):
 						item = self.componentTree.indexFromItem(ct.child(x).child(y).child(z))
-						if self.componentTree.itemFromIndex(item).data(3,0) != None:
+						calculatedValueExists = self.checkIfCalculated(ct.child(x).child(y).child(z))
+						#if self.componentTree.itemFromIndex(item).data(3,0) != None:
+						if calculatedValueExists:
 							temp = []
 							temp.append(ct.child(x).data(0,0)) #dataset
 							temp.append(ct.child(x).child(y).data(0,0)) #component
-							for t in range(0, 6):
+							for t in range(0, len(self.headings)):
 								if t == 0 and (not self.componentTree.itemFromIndex(item).data(0,0) == "All data ("+ ct.child(x).data(0,0)+ ")"):
 									temp.append(self.componentTree.itemFromIndex(item).data(t,0) + " ("+ ct.child(x).data(0,0)+ ")")
 								else:
 									temp.append(self.componentTree.itemFromIndex(item).data(t,0))
 							currentCalculated.append(temp)
-
+		#print(currentCalculated)
 		return currentCalculated
+	
+	def checkIfCalculated(self, dataItem):
+		'''
+		Checks if there is a calculated item in the given dataItem
+		'''
+		for x in range(3, len(self.headings)):
+			if dataItem.data(x,0) != None:
+				print("ITEM",dataItem.data(x,0))
+				return True
+		return False
 
 	def pressedEventExport(self):
 		'''
@@ -2814,11 +3592,11 @@ class StatsDataViewer(DataViewer):
 		else:
 			#print("right")
 			self.leftOrRightJustifyViewers(Qt.AlignRight)
-		
+
 		# recalculate with new notation,
 		# data is cached already so it should be quick
 		self.pressedEventCalculate()
-	
+
 	def leftOrRightJustifyViewers(self, justification):
 
 		#subset view
@@ -2828,7 +3606,7 @@ class StatsDataViewer(DataViewer):
 		for x in range(dataset_count):
 			attribute_count = data.child(x).childCount()
 			for y in range(attribute_count):
-				for col in range(1,6):
+				for col in range(1,len(self.headings)):
 					self.subsetTree.invisibleRootItem().child(0).child(x).child(y).setTextAlignment(col,justification)
 		#    - subsets
 		subset_count = self.subsetTree.invisibleRootItem().child(1).childCount()
@@ -2838,7 +3616,7 @@ class StatsDataViewer(DataViewer):
 				sub_attribute_count = data.child(x).child(y).childCount()
 				#Only the subset section of the tree should be able to reach here
 				for z in range(sub_attribute_count):
-					for col in range(1,6):
+					for col in range(1,len(self.headings)):
 						self.subsetTree.invisibleRootItem().child(0).child(x).child(y).child(z).setTextAlignment(col,justification)
 		#component view
 		dataset_count = self.componentTree.invisibleRootItem().childCount()
@@ -2848,7 +3626,7 @@ class StatsDataViewer(DataViewer):
 			for y in range(attribute_count):
 				sub_attribute_count = data.child(x).child(y).childCount()
 				for z in range(sub_attribute_count):
-					for col in range(1,6):
+					for col in range(1,len(self.headings)):
 						self.componentTree.invisibleRootItem().child(x).child(y).child(z).setTextAlignment(col,justification)
 
 	def runDataStats (self, data_i, comp_i):
@@ -2896,23 +3674,23 @@ class StatsDataViewer(DataViewer):
 		#print("xxyyzz")
 		#print(string)
 
-		mean_val = string % column_data[3]
-		#print(mean_val)
-		#print("mean_val ^^")
-		median_val = string % column_data[4]
-		min_val = string % column_data[5]
-		max_val = string % column_data[6]
-		sum_val = string % column_data[7]
+		#if the values of the stats are not NAN
+		if not column_data[3] == "NaN":
+			mean_val = string % column_data[3]
+			#print(mean_val)
+			#print("mean_val ^^")
+			median_val = string % column_data[4]
+			min_val = string % column_data[5]
+			max_val = string % column_data[6]
+			sum_val = string % column_data[7]
 
-
-		# DAN - I'm choosing to get rid of the df (DataFrame) since we no longer have two tables, only one
-		# I'm instead making this retrn the column_data and putting it directly into the table.
-
-		# Create the column data array and append it to the data frame
-		column_data = (subset_label, data_label, comp_label, mean_val, median_val, min_val, max_val, sum_val)
-		# column_df = pd.DataFrame(column_data, columns=self.headings)
-		# # self.data_frame = self.data_frame.append(column_df, ignore_index=True)
-		return column_data
+			# Create the column data array and append it to the data frame
+			column_data = (subset_label, data_label, comp_label, mean_val, median_val, min_val, max_val, sum_val)
+			# column_df = pd.DataFrame(column_data, columns=self.headings)
+			# # self.data_frame = self.data_frame.append(column_df, ignore_index=True)
+			return column_data
+		else:
+			return (subset_label, data_label, comp_label, "NaN", "NaN", "NaN","NaN", "NaN")
 
 	def newDataStats(self, data_i, comp_i):
 		'''
@@ -2929,6 +3707,12 @@ class StatsDataViewer(DataViewer):
 
 		# Build the cache key
 		cache_key = subset_label + data_label + comp_label
+		
+		#NOTE: This section is only necessary because glue's compute_statistics method will return numerical values for categorical variables instead of NaN.
+		#This if statement can be removed when this bug is fixed.
+		if self.xc[data_i].get_component(self.xc[data_i].components[comp_i]).categorical:
+			#print("Detected categorical")
+			return (subset_label, data_label, comp_label, "NaN", "NaN", "NaN", "NaN", "NaN")
 
 		# Find the stat values
 		# Save the data in the cache
@@ -2967,14 +3751,6 @@ class StatsDataViewer(DataViewer):
 		else:
 			column_data = self.newSubsetStats(subset_i, data_i, comp_i)
 
-		#if True:
-			#THIS IS KILLING PERFORMANCE FIX THIS ISSUE GET RID OF TRY EXCEPT
-			#try:
-			#	column_data = self.cache_stash[cache_key]
-			#except:
-			#	column_data = self.newSubsetStats(subset_i, data_i, comp_i)
-		#else:
-		#	column_data = self.newSubsetStats(subset_i, data_i, comp_i)
 
 		if self.isSci:
 			# Format in scientific notation
@@ -2983,17 +3759,21 @@ class StatsDataViewer(DataViewer):
 			# Format in standard notation
 			string = "%." + str(self.num_sigs) + 'F'
 
-		mean_val = string % column_data[3]
-		#print(mean_val)
-		#print("mean_val ^")
-		median_val = string % column_data[4]
-		min_val = string % column_data[5]
-		max_val = string % column_data[6]
-		sum_val = string % column_data[7]
+		#if the values of the stats are not NAN
+		if not column_data[3] == "NaN":
+			mean_val = string % column_data[3]
+			#print(mean_val)
+			#print("mean_val ^")
+			median_val = string % column_data[4]
+			min_val = string % column_data[5]
+			max_val = string % column_data[6]
+			sum_val = string % column_data[7]
 
-		# Create the column data array and append it to the data frame
-		column_data = (subset_label, data_label, comp_label, mean_val, median_val, min_val, max_val, sum_val)
-		return column_data
+			# Create the column data array and append it to the data frame
+			column_data = (subset_label, data_label, comp_label, mean_val, median_val, min_val, max_val, sum_val)
+			return column_data
+		else:
+			return (subset_label, data_label, comp_label, "NaN", "NaN", "NaN","NaN", "NaN")
 
 	def newSubsetStats(self, subset_i, data_i, comp_i):
 
@@ -3010,6 +3790,11 @@ class StatsDataViewer(DataViewer):
 
 		# Build the cache key
 		cache_key = subset_label + data_label + comp_label
+
+		#NOTE: This section is only necessary because glue's compute_statistics method will return numerical values for categorical variables instead of NaN.
+		#This if statement can be removed when this bug is fixed.
+		if self.xc[data_i].get_component(self.xc[data_i].components[comp_i]).categorical:
+			return (subset_label, data_label, comp_label, "NaN", "NaN", "NaN", "NaN", "NaN")
 
 		mean_val = self.xc[data_i].compute_statistic('mean', self.xc[data_i].subsets[subset_i].components[comp_i], subset_state=self.xc[data_i].subsets[subset_i].subset_state)
 		median_val = self.xc[data_i].compute_statistic('median', self.xc[data_i].subsets[subset_i].components[comp_i], subset_state=self.xc.subset_groups[subset_i].subset_state)
@@ -3123,7 +3908,7 @@ class StatsDataViewer(DataViewer):
 							 #self.xc[i].compute_statistic('minimum', self.dc[i].subsets[j].components[k], subset_state=self.dc[i].subsets[j].subset_state)
 							 temp = True
 						except:
-							#child.setData(0, Qt.CheckStateRole, QVariant())		
+							#child.setData(0, Qt.CheckStateRole, QVariant())
 							parent.setData(0, Qt.CheckStateRole, QVariant())
 							parent.setForeground(0,QtGui.QBrush(Qt.gray))
 							parent.setExpanded(False)
@@ -3205,7 +3990,7 @@ class StatsDataViewer(DataViewer):
 						childtwo.setForeground(0,QtGui.QBrush(Qt.gray))
 					self.num_rows = self.num_rows + 1
 		'''
-	
+
 	def minimizeGrayedData(self):
 		'''
 		minimizes any subsets/components that have no calculable children
@@ -3222,7 +4007,7 @@ class StatsDataViewer(DataViewer):
 				for x in range(0,child.childCount()):
 					if child.foreground(0) != QtGui.QBrush(Qt.gray):
 						subsetGray2 = False
-				
+
 				if subsetGray2:
 					subsetRoot.child(j).child(i).setExpanded(False)
 			if subsetGray:
@@ -3265,7 +4050,6 @@ class ModifiedTreeWidget(QTreeWidget):
 					return
 				dParent.removeChild(self.draggedItem)
 				dParent.insertChild(droppedIndex.row(), self.draggedItem)
-			
+
 
 		QTreeWidget.dropEvent(self, dropEvent)
-
