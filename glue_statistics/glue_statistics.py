@@ -1305,7 +1305,10 @@ class StatsDataViewer(DataViewer):
 
 		#component view
 		elif self.tabs.currentIndex() == 1:
-			self.componentTree.expandAll()
+			if self.componentViewLevel >= 2:
+				return
+			self.componentViewLevel  += 1
+			self.expandLevelHelper(self.componentViewLevel, self.componentTree.invisibleRootItem())
 
 
 	def expandLevelHelper(self, level, view):
@@ -1347,7 +1350,10 @@ class StatsDataViewer(DataViewer):
 		
 		#component view
 		elif self.tabs.currentIndex() ==1:
-			self.componentTree.collapseAll()
+			if self.componentViewLevel <= 0:
+				return
+			self.componentViewLevel  -= 1
+			self.minimizeLevelHelper(self.componentViewLevel, self.componentTree.invisibleRootItem())
 
 	def minimizeLevelHelper(self, level, view):
 		'''
