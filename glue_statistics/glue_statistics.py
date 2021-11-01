@@ -563,7 +563,7 @@ class ExportButton(Tool):
 		action performed when tool is activated
 
     """
-	icon = '/Users/jk317/Glue/icons/glue_export.png'
+	icon = EXPORT_LOGO
 	tool_id = 'export_tool'
 	action_text = 'Export'
 	tool_tip = 'Click icon to export'
