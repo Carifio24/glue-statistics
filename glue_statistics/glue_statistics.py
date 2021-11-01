@@ -461,7 +461,7 @@ class CalculateButton(Tool):
 		action performed when tool is activated
 
     """
-	icon = '/Users/jk317/Glue/icons/glue_calculate.png'
+	icon = CALCULATE_LOGO
 	tool_id = 'calc_tool'
 	action_text = 'Calculate'
 	tool_tip = 'Click side icons to calculate'
