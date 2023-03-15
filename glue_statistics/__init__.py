@@ -1,4 +1,4 @@
-import os 
+import os
 
 REFRESH_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_refresh.png'))
 NOTATION_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_scientific_notation.png'))
@@ -13,6 +13,8 @@ SAVE_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_filesa
 EXPAND_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_expand.png'))
 COLLAPSE_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_collapse.png'))
 CUSTOM_COLUMN_LOGO = os.path.abspath(os.path.join(os.path.dirname(__file__), 'glue_addColumn.png'))
+
+from . import tools
 
 def setup():
     from .glue_statistics import StatsDataViewer
