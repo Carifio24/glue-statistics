@@ -1,20 +1,16 @@
 import numpy as np
 import sys
 import pandas as pd
-from qtpy.QtWidgets import QWidget, QHBoxLayout, QGridLayout, QVBoxLayout, QTextEdit, QCheckBox, QTreeWidget, QTreeWidgetItem, QAbstractItemView, QPushButton, QSpinBox, QMainWindow, QLabel, QMessageBox, QRadioButton, QFormLayout, QLineEdit, QComboBox
-from PyQt5.QtCore import QVariant, QItemSelectionModel, QAbstractItemModel, Qt, QModelIndex
-
-from glue.viewers.common.layer_artist import LayerArtist
+from qtpy.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QTextEdit, QCheckBox, QTreeWidget, QTreeWidgetItem, QAbstractItemView, QPushButton, QSpinBox, QMainWindow, QLabel, QMessageBox, QRadioButton, QLineEdit, QComboBox
+from PyQt5.QtCore import QVariant, QItemSelectionModel, Qt
 
 from glue.viewers.common.qt.data_viewer import DataViewer
 from glue.viewers.common.qt.toolbar import BasicToolbar
-from glue.utils.qt import load_ui
-from decimal import getcontext, Decimal
-from glue.core import DataCollection, Hub, HubListener, Data, coordinates
-from glue.core.message import  DataMessage, DataCollectionMessage, ErrorMessage, SubsetMessage, SubsetCreateMessage, SubsetUpdateMessage, \
-LayerArtistEnabledMessage, NumericalDataChangedMessage, DataUpdateMessage, DataAddComponentMessage, DataRemoveComponentMessage, DataCollectionAddMessage, DataCollectionDeleteMessage,\
-SubsetDeleteMessage, EditSubsetMessage, DataCollectionActiveChange, LayerArtistVisibilityMessage, LayerArtistDisabledMessage, LayerArtistUpdatedMessage, ComputationMessage, \
-ExternallyDerivableComponentsChangedMessage, DataRenameComponentMessage
+from glue.core import Data
+from glue.core.message import SubsetUpdateMessage, DataUpdateMessage, \
+	DataAddComponentMessage, DataRemoveComponentMessage, DataCollectionDeleteMessage,\
+	SubsetDeleteMessage, EditSubsetMessage, LayerArtistVisibilityMessage, \
+	ExternallyDerivableComponentsChangedMessage, DataRenameComponentMessage
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QTabWidget
