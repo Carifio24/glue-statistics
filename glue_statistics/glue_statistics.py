@@ -1,17 +1,7 @@
-import os
 import numpy as np
 import sys
 import pandas as pd
-import scipy
-import math
 from qtpy.QtWidgets import QWidget, QHBoxLayout, QGridLayout, QVBoxLayout, QTextEdit, QCheckBox, QTreeWidget, QTreeWidgetItem, QAbstractItemView, QPushButton, QSpinBox, QMainWindow, QLabel, QMessageBox, QRadioButton, QFormLayout, QLineEdit, QComboBox
-from glue.config import qt_client
-from glue.core.data_combo_helper import ComponentIDComboHelper
-from glue.core.data_factories import load_data
-from glue.external.echo import CallbackProperty, SelectionCallbackProperty
-from glue.external.echo.qt import (connect_checkable_button,
-								   autoconnect_callbacks_to_qt,
-								   connect)
 from PyQt5.QtCore import QVariant, QItemSelectionModel, QAbstractItemModel, Qt, QModelIndex
 
 from glue.viewers.common.layer_artist import LayerArtist
@@ -25,7 +15,7 @@ from glue.core.message import  DataMessage, DataCollectionMessage, ErrorMessage,
 LayerArtistEnabledMessage, NumericalDataChangedMessage, DataUpdateMessage, DataAddComponentMessage, DataRemoveComponentMessage, DataCollectionAddMessage, DataCollectionDeleteMessage,\
 SubsetDeleteMessage, EditSubsetMessage, DataCollectionActiveChange, LayerArtistVisibilityMessage, LayerArtistDisabledMessage, LayerArtistUpdatedMessage, ComputationMessage, \
 ExternallyDerivableComponentsChangedMessage, DataRenameComponentMessage
-from PyQt5.QtGui import QStandardItemModel,
+from PyQt5.QtGui import QStandardItemModel
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QTabWidget
 from glue.icons.qt import helpers
@@ -36,7 +26,7 @@ from glue.viewers.scatter.qt import ScatterViewer
 from glue_vispy_viewers.scatter.scatter_viewer import VispyScatterViewer
 from glue.core import Data
 
-from glue_statistics import REFRESH_LOGO, NOTATION_LOGO, EXPORT_LOGO, CALCULATE_LOGO, SORT_LOGO, SETTINGS_LOGO, INSTRUCTIONS_LOGO, HOME_LOGO, SAVE_LOGO, EXPAND_LOGO, COLLAPSE_LOGO, CUSTOM_COLUMN_LOGO
+from glue_statistics.icons import NOTATION_LOGO, CALCULATE_LOGO, SORT_LOGO, SETTINGS_LOGO, INSTRUCTIONS_LOGO, HOME_LOGO, SAVE_LOGO, EXPAND_LOGO, COLLAPSE_LOGO
 showInstructions = True
 
 

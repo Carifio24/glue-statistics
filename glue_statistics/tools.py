@@ -1,7 +1,7 @@
-from glue_statistics import NOTATION_LOGO, EXPORT_LOGO, CALCULATE_LOGO, SORT_LOGO, SETTINGS_LOGO, INSTRUCTIONS_LOGO, HOME_LOGO, SAVE_LOGO, EXPAND_LOGO, COLLAPSE_LOGO, CUSTOM_COLUMN_LOGO
+from glue_statistics.icons import NOTATION_LOGO, EXPORT_LOGO, CALCULATE_LOGO, SORT_LOGO, SETTINGS_LOGO, INSTRUCTIONS_LOGO, HOME_LOGO, SAVE_LOGO, EXPAND_LOGO, COLLAPSE_LOGO, CUSTOM_COLUMN_LOGO
 
 from glue.config import viewer_tool
-from glue.viewers.common.qt.tool import CheckableTool, Tool, DropdownTool, SimpleToolMenu
+from glue.viewers.common.qt.tool import Tool, SimpleToolMenu
 
 from qtpy import QtWidgets
 
