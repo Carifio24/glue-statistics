@@ -1,7 +1,7 @@
 
-****************************************
+******************************************
 Glue Statistics Data Viewer Documentation
-****************************************
+******************************************
 
     :keywords: Documentation
 
@@ -33,48 +33,77 @@ This section describes the structure of documentation and its files.
 Toolbar
 ============================
 
-.. image:: /icons/1.png
+.. image:: ../icons/1.png
 
 Save
 -----------------
+.. image:: ../icons/glue_filesave.png
+    :width: 35px
 
 This button is used to export your work done on the Statistics Viewer. The current open tree viewer will be exported (Subset/Component Tree View) will all the calculated values. The data is in a csv machine-readable format.
 
 Home
 -----------------
+.. image:: ../icons/glue_home.png
+    :width: 35px
+
 This button resets the entire Statistics Viewer to its default state as it was first loaded with all data, subsets, and calculated values. This button is helpful for users who have sorted the data in the viewer and wish to revert to the original view.
 
-Minimize
+Collapse
 -----------------
+.. image:: ../icons/glue_collapse.png
+    :width: 35px
+
 Minimizes the rows of the Statistics Viewer in levels.
 
-Maxmize
+Expand
 -----------------
+.. image:: ../icons/glue_expand.png
+    :width: 35px
+
 Maximizes the rows of the Statistics Viewer in levels.
 
 
 Scientific/Decimal Notation
-------------------
+-------------------------------
+.. image:: ../icons/glue_decimal.png
+    :width: 35px
+
 This button is used to toggle the values of the Statistics Viewer from scientific/decimal notation. The calculated values are left-justified in scientific notation and right-justified in decimal notation so the values are lined up and more easily comparable at a glance.
 
 Sorting
 ------------------
+.. image:: ../icons/glue_sort.png
+    :width: 35px
+
 Toggles the ability to sort. Click on each column name to sort by decreasing or increasing value. You are also able to drag rows and columns to your preference. 
 
 Quick Export to Viewer
-------------------
+--------------------------
+.. image:: ../icons/glue_export.png
+    :width: 35px
+
 For users who wish to quickly export calculated data in the Statistics Viewer to another viewer in Glue. This prevents exporting the data to an external file, importing the file back into glue, and opening the new viewer.
 
 Instructions
 ------------------
+.. image:: ../icons/glue_instructions.png
+    :width: 35px
+
 Press this button to see the instructions panel that showed up when creating the Statistics Viewer. 
 
 Custom Column
 ------------------
+.. image:: ../icons/glue_addcolumn.png
+    :width: 35px
+
 Feature that allows the user to create input python code to calculate values of a new column. Current libraries already defined in the config file consist of numpy, math, pandas, and scipy. Other libraries can be imported in the custom config file.
 
 Settings
 ------------------
+.. image:: ../icons/glue_settings.png
+    :width: 35px
+
 The Settings icon can be used (as of now) to modifiy the number of decimal points that calculated values have, or to toggle manual calculation(See Warnings and Potential Issues for more info). 
 
 
@@ -106,7 +135,7 @@ Existing subsets that are modified will automatically update the values on the S
 
 
 Warnings and Potential Issues
-=======================
+==================================
 
 Sorting
 -----------------
