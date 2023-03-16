@@ -19,7 +19,10 @@ from glue.viewers.table.qt import TableViewer
 from glue.viewers.profile.qt import ProfileViewer
 from glue.viewers.histogram.qt import HistogramViewer
 from glue.viewers.scatter.qt import ScatterViewer
-from glue_vispy_viewers.scatter.scatter_viewer import VispyScatterViewer
+try:
+	from glue_vispy_viewers.scatter.scatter_viewer import VispyScatterViewer
+except ImportError:
+	VispyScatterViewer = None
 from glue.core import Data
 
 from glue_statistics.icons import NOTATION_LOGO, CALCULATE_LOGO, SORT_LOGO, SETTINGS_LOGO, INSTRUCTIONS_LOGO, HOME_LOGO, SAVE_LOGO, EXPAND_LOGO, COLLAPSE_LOGO
@@ -808,7 +811,8 @@ class StatsDataViewer(DataViewer):
 			self.viewerCombo.addItem('1D Histogram')
 			self.viewerCombo.addItem('1D Profile')
 			self.viewerCombo.addItem('2D Scatter')
-			self.viewerCombo.addItem('3D Scatter')
+			if VispyScatterViewer is not None:
+				self.viewerCombo.addItem('3D Scatter')
 
 			label = QLabel("Choose a new data viewer:")
 
