@@ -1,0 +1,29 @@
+# Sphinx
+docs/build
+
+# Packages/installer info
+docs/.eggs
+*.egg-info
+dist
+
+# Compiled files
+*.pyc
+
+# PyCharm
+.idea
+
+# Mac OSX
+.DS_Store
+
+# Eclipse editor project files
+.project
+.pydevproject
+.settings
+
+.eggs
+.hypothesis
+.pytest_cache
+.tox
+.vscode
+# vscode plugin
+.history
