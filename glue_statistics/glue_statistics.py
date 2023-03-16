@@ -804,15 +804,13 @@ class StatsDataViewer(DataViewer):
 		df = self.getCurrentCalculated()
 		if len(df) > 1:
 
+			from glue.config import qt_client
+
 			self.chooseViewerWidget = QWidget()
 
 			self.viewerCombo = QComboBox()
-			self.viewerCombo.addItem('Table Viewer')
-			self.viewerCombo.addItem('1D Histogram')
-			self.viewerCombo.addItem('1D Profile')
-			self.viewerCombo.addItem('2D Scatter')
-			if VispyScatterViewer is not None:
-				self.viewerCombo.addItem('3D Scatter')
+			for viewer_type in qt_client.members:
+				self.viewerCombo.addItem(viewer_type.LABEL, viewer_type)
 
 			label = QLabel("Choose a new data viewer:")
 
@@ -909,12 +907,8 @@ class StatsDataViewer(DataViewer):
 		self.saveStatsWidget.close()
 
 	def openNewViewer(self):
-		#print("openNewViewer")
-		#print(self.viewerCombo.currentText())
-		#print(self.newStatsDatasetName.text())
-
 		df = self.getCurrentCalculated()
-		viewerToOpen = self.viewerCombo.currentText()
+		viewerToOpen = self.viewerCombo.currentData()
 		datasetname = self.newStatsDatasetName.text()
 
 		if datasetname == '':
@@ -924,9 +918,7 @@ class StatsDataViewer(DataViewer):
 			QMessageBox.warning(None,'Error','Dataset with this name already exists')
 			return
 
-
-
-		data = Data(label =  str(datasetname))
+		data = Data(label=datasetname)
 		df = np.array(df)
 		#transpose list
 		df = df.T
@@ -934,25 +926,10 @@ class StatsDataViewer(DataViewer):
 		for row in df:
 			data.add_component(row[1:], label = row[0])
 
-
 		self.xc.append(data)
 
-		if viewerToOpen == "Table Viewer":
-			viewer = self.session.application.new_data_viewer(TableViewer)
-			viewer.add_data(data)
-		elif viewerToOpen == "1D Histogram":
-			viewer = self.session.application.new_data_viewer(HistogramViewer)
-			viewer.add_data(data)
-		elif viewerToOpen == "1D Profile":
-			viewer = self.session.application.new_data_viewer(ProfileViewer)
-			viewer.add_data(data)
-		elif viewerToOpen == "2D Scatter":
-			viewer = self.session.application.new_data_viewer(ScatterViewer)
-			viewer.add_data(data)
-		elif viewerToOpen == "3D Scatter":
-			viewer = self.session.application.new_data_viewer(VispyScatterViewer)
-			viewer.add_data(data)
-
+		viewer = self.session.application.new_data_viewer(viewerToOpen)
+		viewer.add_data(data)
 
 		self.chooseViewerWidget.close()
 
