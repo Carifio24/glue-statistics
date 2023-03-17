@@ -1,7 +1,9 @@
 from os.path import abspath, dirname, join
 
+
 def icon_path(filename):
     return abspath(join(dirname(__file__), filename))
+
 
 REFRESH_LOGO = icon_path('glue_refresh.png')
 NOTATION_LOGO = icon_path('glue_scientific_notation.png')

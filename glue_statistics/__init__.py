@@ -1,6 +1,5 @@
-import os
+from . import tools  # noqa
 
-from . import tools
 
 def setup():
     from .glue_statistics import StatsDataViewer
