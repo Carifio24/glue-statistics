@@ -1,6 +1,8 @@
 import numpy as np
 import sys
 import pandas as pd
+
+from qtpy import compat
 from qtpy.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QTextEdit, QCheckBox, \
     QTreeWidget, QTreeWidgetItem, QAbstractItemView, QPushButton, QSpinBox, QMainWindow, \
     QLabel, QMessageBox, QRadioButton, QLineEdit, QComboBox
@@ -223,12 +225,18 @@ class StatsDataViewer(DataViewer):
         # self.widget.setWindowFlag(Qt.WindowContextHelpButtonHint, True)
         # title = "New Column"
         # message = "Enter new column name"
-        instr = QLabel("<p><strong>Note: </strong>Attribute names in the expression should be surrounded <br> by { } brackets (e.g. {Component}), and you can use Numpy functions using np.<function>, Pandas, <br> math or any library defined in the config file</p>")
+        instr = QLabel("<p><strong>Note: </strong>Attribute names in the expression should be "
+                       "surrounded <br> by { } brackets (e.g. {Component}), and you can use Numpy "
+                       "functions using np.<function>, Pandas, <br> math or any library defined in "
+                       "the config file</p>")
         instr.setTextFormat(1)
         self.expressionEditor = QTextEdit()
         # self.expressionEditor.setFixedSize(650, 175)
         # self.expressionEditor.resize(50, 60)
-        self.expressionEditor.setPlaceholderText("Type any mathematical expression here - you can include attribute names from the drop-down below by selecting them and clicking 'Insert'. Press the ? button for examples of valid expressions and more information.")
+        self.expressionEditor.setPlaceholderText(
+            "Type any mathematical expression here - you can include attribute names from "
+            "the drop-down below by selecting them and clicking 'Insert'. Press the ? button "
+            "for examples of valid expressions and more information.")
         self.expressionEditor.textChanged.connect(self.highlightAttributes)
 
         self.columnNameLine = QLineEdit()
@@ -280,14 +288,17 @@ class StatsDataViewer(DataViewer):
         layoutExamples.setAlignment(Qt.AlignTop)
         exampleExpr = QLabel()
         exampleExpr.setTextFormat(1)
-        exampleExpr.setText("<p><strong>Example Expressions:</strong><br>- np.std({Component})<br>- np.sum({Maximum}-{Minimum})*2</p>")
+        exampleExpr.setText("<p><strong>Example Expressions:</strong><br>- np.std({Component})<br>"
+                            "- np.sum({Maximum}-{Minimum})*2</p>")
         layoutExamples.addWidget(exampleExpr)
 
         layout4 = QHBoxLayout()
 
         self.setNameLabel = QLabel()
         self.setNameLabel.setTextFormat(1)
-        self.setNameLabel.setText("<p><span style=\"color: #ff0000;\">" + "Attribute name not set" + "</span></p>")
+        self.setNameLabel.setText("<p><span style=\"color: #ff0000;\">"
+                                  "Attribute name not set"
+                                  "</span></p>")
         self.submit = QPushButton("Ok")
         self.submit.setEnabled(False)
         self.submit.clicked.connect(self.createNewColumn)
@@ -1421,7 +1432,7 @@ class StatsDataViewer(DataViewer):
         self.instructionWindow.setWindowTitle("Instructions")
         self.instructionLabel = QLabel()
         self.instructionLabel.setTextFormat(1)
-        self.instructionLabel.setText("<h2 style=\"text-align: center;\"><img src=" + str(INSTRUCTIONS_LOGO) + " width=\"46\" height=\"46\" />&nbsp;<strong>Instructions:</strong></h2><p>Tick the rows to calculate basic statistics</p><p>Click between Subset and Component views</p><p><img src=" + str(SAVE_LOGO) + " width=\"30\" height=\"30\" />&nbsp;Exports the current open tree view</p><p><img src=" + str(HOME_LOGO) + " width=\"30\" height=\"30\" />&nbsp;Resets the viewer to default layout</p><p><img src=" + str(CALCULATE_LOGO) + " width=\"30\" height=\"30\"/>&nbsp;Calculate entire view</p><p><img src=" + str(COLLAPSE_LOGO) + " width=\"30\" height=\"30\"/>&nbsp;Minimize a level</p><p><img src=" + str(EXPAND_LOGO) +" width=\"30\" height=\"30\"/>&nbsp;Expand a level</p><p><img src=" + str(NOTATION_LOGO)+ " width=\"30\" height=\"30\" />&nbsp;Toggles scientific notation and decimal form</p><p><strong><img src=" + str(SORT_LOGO)+" width=\"30\" height=\"30\" />&nbsp;</strong>Enables sorting, selecting a column will sort rows accordingly</p><p><img src=" + str(INSTRUCTIONS_LOGO)+ " width=\"30\" height=\"30\" />&nbsp;Read instructions</p><p><img src=" + str(SETTINGS_LOGO)+" width=\"30\" height=\"30\" />&nbsp;Change # of decimal points, instructions, etc</p><p>&nbsp;</p>")
+        self.instructionLabel.setText("<h2 style=\"text-align: center;\"><img src=" + str(INSTRUCTIONS_LOGO) + " width=\"46\" height=\"46\" />&nbsp;<strong>Instructions:</strong></h2><p>Tick the rows to calculate basic statistics</p><p>Click between Subset and Component views</p><p><img src=" + str(SAVE_LOGO) + " width=\"30\" height=\"30\" />&nbsp;Exports the current open tree view</p><p><img src=" + str(HOME_LOGO) + " width=\"30\" height=\"30\" />&nbsp;Resets the viewer to default layout</p><p><img src=" + str(CALCULATE_LOGO) + " width=\"30\" height=\"30\"/>&nbsp;Calculate entire view</p><p><img src=" + str(COLLAPSE_LOGO) + " width=\"30\" height=\"30\"/>&nbsp;Minimize a level</p><p><img src=" + str(EXPAND_LOGO) + " width=\"30\" height=\"30\"/>&nbsp;Expand a level</p><p><img src=" + str(NOTATION_LOGO) + " width=\"30\" height=\"30\" />&nbsp;Toggles scientific notation and decimal form</p><p><strong><img src=" + str(SORT_LOGO)+" width=\"30\" height=\"30\" />&nbsp;</strong>Enables sorting, selecting a column will sort rows accordingly</p><p><img src=" + str(INSTRUCTIONS_LOGO) + " width=\"30\" height=\"30\" />&nbsp;Read instructions</p><p><img src=" + str(SETTINGS_LOGO) + " width=\"30\" height=\"30\" />&nbsp;Change # of decimal points, instructions, etc</p><p>&nbsp;</p>")
         # self.instructionLabel.setText("<h2 style=\"text-align: center;\"><strong>Instructions:</strong></h2><p>Check the rows to calculate basic statistics</p><p>Cycle between Subset and Component views with the tabs</p><p><span style=\"color: #ff0000;\"><strong>Save</strong></span> Exports the current open tree view</p><p><span style=\"color: #ff0000;\"><strong>Home</strong></span> Resets viewer to default state</p><p><span style=\"color: #ff0000;\"><strong>Notation</strong></span> Toggles scientific notation and decimal form</p><p><span style=\"color: #ff0000;\"><strong>Sort</strong></span> Enables sorting, selecting a column will sort rows accordingly</p><p><span style=\"color: #ff0000;\"><strong>Instructions</strong></span> See how the viewer works</p><p><span style=\"color: #ff0000;\"><strong>Settings</strong></span> Change # of decimal points or toggle manual mode</p>")
 
         # self.instructionLabel.setText("<h2 style=\"text-align: center;\"><img src=glue_instructions.png width=\"46\" height=\"46\" />&nbsp;<strong>Instructions:</strong></h2><p>Check the rows to calculate basic statistics<p><p>Cycle between Subset and Component views with the tabs<p><p><img src=\"glue_home\" />&nbsp; Resets the viewer to default layout<p><p><span style=\"color: #ff0000;\"><strong><img src=\"SORT_LOGO\" width=\"30\" height=\"30\"/>&nbsp;</strong></span>Enables sorting, selecting a column will sort rows accordingly<p><p><img src=\"/Users/jk317/Glue/icons/glue_scientific_notation.png\" width=\"30\" height=\"30\"/>&nbsp;Toggles scientific notation and decimal form<p><p><img src='glue_filesave' width=\"30\" height=\"30\"/>Exports the current open tree view<p><p><img src=\"/Users/jk317/Glue/icons/glue_settings.png\"width=\"30\" height=\"30\" />&nbsp;to change # of decimal points or to read more instructions<p>")
